@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">MP_Term_Project</string>
+    <string name="search_profiles">사람</string>
+    <string name="search_contents">컨텐츠</string>
+    <string name="search_hintText">검색어를 입력하세요.</string>
 </resources>
