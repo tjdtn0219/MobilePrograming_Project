@@ -3,4 +3,8 @@
     <string name="search_profiles">사람</string>
     <string name="search_contents">컨텐츠</string>
     <string name="search_hintText">검색어를 입력하세요.</string>
+    <string name="chatting_titlePlaceholder">***님과의 채팅</string>
+    <string name="chatting_editTextHint">채팅을 입력하세요</string>
+    <string name="chatting_opponent_message_namePlaceholder">상대방</string>
+    <string name="chatting_opponent_message_messagePlaceholder">메시지입니다.</string>
 </resources>
