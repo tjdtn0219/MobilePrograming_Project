@@ -10,9 +10,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
-
-        Intent intent = new Intent(this, ChattingActivity.class);
-        startActivity(intent);
+        setContentView(R.layout.activity_main);
     }
 }
