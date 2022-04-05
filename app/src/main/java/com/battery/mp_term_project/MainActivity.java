@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
         addContent();
         addContent();
         addContent();
+
     }
 
     private void addContent() {
