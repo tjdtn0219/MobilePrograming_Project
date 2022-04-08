@@ -7,4 +7,7 @@
     <string name="chatting_editTextHint">채팅을 입력하세요</string>
     <string name="chatting_opponent_message_namePlaceholder">상대방</string>
     <string name="chatting_opponent_message_messagePlaceholder">메시지입니다.</string>
+    <string name="menu_actionbar_main_search_title">검색</string>
+    <string name="menu_actionbar_main_write_title">글 작성</string>
+    <string name="menu_actionbar_main_profile_title">내 프로필</string>
 </resources>
