@@ -9,16 +9,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
 
-    private LayoutInflater inflater;
-    private ArrayList<String> categoryStrings = new ArrayList<String>();
+    private final LayoutInflater inflater;
+    private final ArrayList<String> categoryStrings = new ArrayList<String>();
 
     CategoryAdapter(Context context)
     {
@@ -27,20 +29,25 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
     public void addCategory()
     {
-        categoryStrings.add("Test" + categoryStrings.size());
-        notifyDataSetChanged();
+        addCategory("Test" + categoryStrings.size());
     }
 
     public void addCategory(String categoryString)
     {
         categoryStrings.add(categoryString);
-        notifyDataSetChanged();
+        notifyItemInserted(categoryStrings.size() - 1);
+    }
+
+    public void editCategory(String newCategoryString, int position)
+    {
+        categoryStrings.set(position, newCategoryString);
+        notifyItemChanged(position);
     }
 
     public void removeCategory(int position)
     {
         categoryStrings.remove(position);
-        notifyDataSetChanged();
+        notifyItemRemoved(position);
     }
 
     @NonNull
@@ -84,7 +91,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
                     int itemId = menuItem.getItemId();
                     if (itemId == R.id.item_category_edit)
                     {
-                        //#todo : 편집 기능 추가
+                        createEditCategoryDialog(v, getAdapterPosition());
                         return true;
                     }
                     else if (itemId == R.id.item_category_delete)
@@ -96,6 +103,29 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
                     return false;
                 });
             }
+        }
+
+        private void createEditCategoryDialog(View v, int adapterPosition)
+        {
+            View dialogView = inflater.inflate(R.layout.main_create_category_dialog, null);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+            builder.setView(dialogView);
+            AlertDialog alertDialog = builder.create();
+
+            EditText categoryName = dialogView.findViewById(R.id.categoryName);
+            Button confirmButton = dialogView.findViewById(R.id.confirmButton);
+            confirmButton.setOnClickListener(view -> {
+                editCategory(categoryName.getText().toString(), adapterPosition);
+                alertDialog.dismiss();
+            });
+
+            Button cancelButton = dialogView.findViewById(R.id.cancelButton);
+            cancelButton.setOnClickListener(view -> {
+                alertDialog.cancel();
+            });
+
+            alertDialog.show();
         }
     }
 }

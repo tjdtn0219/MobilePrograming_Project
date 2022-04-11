@@ -11,6 +11,7 @@
         android:layout_height="60dp"
         android:background="@drawable/roundstyle"
         android:backgroundTint="#F5BCBCBC"
+        android:contentDescription="@string/main_add_category_button_contentDescription"
         android:scaleType="centerInside"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
