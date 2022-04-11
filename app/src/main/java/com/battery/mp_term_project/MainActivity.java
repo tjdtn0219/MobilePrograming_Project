@@ -16,6 +16,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+//        Intent intent = getIntent();LoginActivity에서 startActivityForResult, putExtra 한 거 받기
+//        String nickName = intent.getStringExtra("nickname");LoginActivity에서 가져옴
+//        String photoURL = intent.getStringExtra("photoURL");LoginActivity에서 가져옴
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
