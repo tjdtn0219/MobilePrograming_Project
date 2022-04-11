@@ -14,7 +14,7 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        contentSearchView = findViewById(R.id.contentSearchView);
-        contentSearchView.requestFocus();
+        SearchView contentSearchView = findViewById(R.id.contentSearchView);
+        contentSearchView.setIconified(false);
     }
 }
