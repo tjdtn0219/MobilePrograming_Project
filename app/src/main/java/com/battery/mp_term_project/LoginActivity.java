@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-        
+
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         mAuth = FirebaseAuth.getInstance();
 
@@ -88,6 +88,12 @@ public class LoginActivity extends AppCompatActivity {
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
+                            Log.e("USERRRRR ID", user.getDisplayName());
+                            Log.e("USERRRRR ID", user.getEmail());
+                            //Log.e("USERRRRR ID", user.getPhoneNumber());
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            //intent.putExtra()
+                            startActivity(intent);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
