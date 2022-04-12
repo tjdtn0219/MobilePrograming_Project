@@ -1,6 +1,8 @@
 package com.battery.mp_term_project;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,11 +10,17 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 public class MainActivity extends AppCompatActivity {
 
-    private LinearLayout container;
+    private LayoutInflater inflater;
+
+    private CategoryAdapter categoryAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +32,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        ImageButton addCategoryButton = findViewById(R.id.addCategoryButton);
+        addCategoryButton.setOnClickListener(view -> {
+            createAddCategoryDialog();
+        });
+
+        RecyclerView categoryRecyclerView = findViewById(R.id.categoryRecyclerView);
+        categoryAdapter = new CategoryAdapter(this);
+        categoryRecyclerView.setAdapter(categoryAdapter);
+
         addContent();
         addContent();
         addContent();
@@ -32,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        getMenuInflater().inflate(R.menu.menu_actionbar_main, menu);
+        getMenuInflater().inflate(R.menu.actionbar_main, menu);
         return true;
     }
 
@@ -59,11 +78,33 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    private void addContent() {
-        container = findViewById(R.id.contentscontainer);
+    private void addContent()
+    {
+        LinearLayout container = findViewById(R.id.contentscontainer);
 
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.content, container, true);
     }
 
+    private void createAddCategoryDialog()
+    {
+        View dialogView = inflater.inflate(R.layout.main_create_category_dialog, null);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+        AlertDialog alertDialog = builder.create();
+
+        EditText categoryName = dialogView.findViewById(R.id.categoryName);
+        Button confirmButton = dialogView.findViewById(R.id.confirmButton);
+        confirmButton.setOnClickListener(view -> {
+            categoryAdapter.addCategory(categoryName.getText().toString());
+            alertDialog.dismiss();
+        });
+
+        Button cancelButton = dialogView.findViewById(R.id.cancelButton);
+        cancelButton.setOnClickListener(view -> {
+            alertDialog.cancel();
+        });
+
+        alertDialog.show();
+    }
 }
