@@ -21,12 +21,14 @@ public class ChattingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatting);
 
+        //#todo : 상대방의 이름 추가
+        setTitle(R.string.chatting_titlePlaceholder);
+
         RecyclerView chattingRecyclerView = findViewById(R.id.chattingRecyclerView);
         chatMessageAdapter = new ChatMessageAdapter(this);
         chattingRecyclerView.setAdapter(chatMessageAdapter);
 
         //#todo : 채팅 데이터 가져와서 적용
-        //#todo : 상대방의 이름 추가
         for (int i = 0; i < 25; i++)
         {
             chatMessageAdapter.addMyMessage("안녕하세요.\n테스트 메시지입니다." + i);
