@@ -19,10 +19,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -41,6 +44,9 @@ public class ProfileActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
+
+        //컨첸츠 리사이클러뷰 추가
+        profilebindList();
 
 
         // 앨범으로 이동하는 버튼
@@ -80,6 +86,26 @@ public class ProfileActivity extends AppCompatActivity {
             } else if (resultCode == RESULT_CANCELED) {// 취소시 호출할 행동 쓰기
             }
         }
+    }
+
+    private void profilebindList(){
+
+        List<ContentRecyclerViewItem> itemList = new ArrayList<>();
+
+        for(int i = 0 ; i < 100 ; i ++){
+            itemList.add(new ContentRecyclerViewItem(R.id.user_img, "name", "profiletext", R.id.img1, R.id.img2, R.id.img3));
+        }
+
+
+        RecyclerView mainRecyclerView = findViewById(R.id.profile_recycler_view);
+
+        ContentRecyclerViewAdapter adapter = new ContentRecyclerViewAdapter(itemList);
+        mainRecyclerView.setAdapter(adapter);
+
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        mainRecyclerView.setLayoutManager(layoutManager);
+
+
     }
 
 

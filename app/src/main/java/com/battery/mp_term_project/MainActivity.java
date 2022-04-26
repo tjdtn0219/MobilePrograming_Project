@@ -2,11 +2,14 @@ package com.battery.mp_term_project;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,12 +18,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private LayoutInflater inflater;
 
     private CategoryAdapter categoryAdapter;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,9 +53,12 @@ public class MainActivity extends AppCompatActivity {
         categoryAdapter = new CategoryAdapter(this);
         categoryRecyclerView.setAdapter(categoryAdapter);
 
-        addContent();
-        addContent();
-        addContent();
+
+
+
+        //컨첸츠 리사이클러뷰 추가
+        mainbindList();
+
     }
 
     @Override
@@ -78,13 +91,6 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    private void addContent()
-    {
-        LinearLayout container = findViewById(R.id.contentscontainer);
-
-        inflater.inflate(R.layout.content, container, true);
-    }
-
     private void createAddCategoryDialog()
     {
         View dialogView = inflater.inflate(R.layout.main_create_category_dialog, null);
@@ -107,4 +113,25 @@ public class MainActivity extends AppCompatActivity {
 
         alertDialog.show();
     }
+
+    private void mainbindList(){
+
+        List<ContentRecyclerViewItem> itemList = new ArrayList<>();
+
+        for(int i = 0 ; i < 100 ; i ++){
+            itemList.add(new ContentRecyclerViewItem(R.id.user_img, "name", "maintext", R.id.img1, R.id.img2, R.id.img3));
+        }
+
+
+        RecyclerView mainRecyclerView = findViewById(R.id.main_recycler_view);
+
+        ContentRecyclerViewAdapter adapter = new ContentRecyclerViewAdapter(itemList);
+        mainRecyclerView.setAdapter(adapter);
+
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        mainRecyclerView.setLayoutManager(layoutManager);
+
+
+    }
+
 }
