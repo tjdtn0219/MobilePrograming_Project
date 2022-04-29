@@ -40,7 +40,6 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
         //#todo : 나의 이름 필요
         ChatData chatData = new ChatData("", myMessage, true);
         chatDataArrayList.add(chatData);
-        notifyDataSetChanged();
         notifyItemInserted(chatDataArrayList.size() - 1);
     }
 
@@ -49,7 +48,6 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
         //#todo : 상대방의 이름 필요
         ChatData chatData = new ChatData("", opponentMessage, false);
         chatDataArrayList.add(chatData);
-        notifyDataSetChanged();
         notifyItemInserted(chatDataArrayList.size() - 1);
     }
 
