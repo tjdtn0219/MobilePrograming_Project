@@ -11,72 +11,30 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class ChattingActivity extends AppCompatActivity {
 
-    public class ChatMessageView extends ConstraintLayout {
-
-        LayoutInflater inflater;
-        View opponentChatView;
-        View myChatView;
-
-        public ChatMessageView(Context context) {
-            super(context);
-            inflater = (LayoutInflater) getContext().getSystemService(LAYOUT_INFLATER_SERVICE);
-        }
-
-        public void setOpponentMessage(String message)
-        {
-            opponentChatView = inflater.inflate(R.layout.chat_opponent_message, null);
-            addView(opponentChatView);
-            TextView messageText = findViewById(R.id.opponentMessageText);
-            messageText.setText(message);
-        }
-
-        public void setMyMessage(String message)
-        {
-            myChatView = inflater.inflate(R.layout.chat_my_message, null);
-            addView(myChatView);
-            TextView messageText = findViewById(R.id.myMessageText);
-            messageText.setText(message);
-        }
-    }
-
-    LinearLayout chatLinearLayout;
+    private ChatMessageAdapter chatMessageAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatting);
 
-        chatLinearLayout = findViewById(R.id.chatLinearLayout);
+        //#todo : 상대방의 이름 추가
+        setTitle(R.string.chatting_titlePlaceholder);
 
-        addMyMessage("안녕하세요. 테스트 메시지입니다.");
-        addOpponentMessage("안녕하세요.");
-    }
+        RecyclerView chattingRecyclerView = findViewById(R.id.chattingRecyclerView);
+        chatMessageAdapter = new ChatMessageAdapter(this);
+        chattingRecyclerView.setAdapter(chatMessageAdapter);
 
-    public void addMyMessage(String message)
-    {
-        ChatMessageView myMessageView = new ChatMessageView(this);
-        myMessageView.setMyMessage(message);
-        
-        // 내 메시지는 오른쪽에 나타나도록
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        params.gravity = Gravity.RIGHT;
-        myMessageView.setLayoutParams(params);
-
-        chatLinearLayout.addView(myMessageView);
-    }
-
-    public void addOpponentMessage(String message)
-    {
-        ChatMessageView opponentMessageView = new ChatMessageView(this);
-        opponentMessageView.setOpponentMessage(message);
-
-        // 상대 메시지는 왼쪽에 나타나도록
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        params.gravity = Gravity.LEFT;
-        opponentMessageView.setLayoutParams(params);
-
-        chatLinearLayout.addView(opponentMessageView);
+        //#todo : 채팅 데이터 가져와서 적용
+        for (int i = 0; i < 25; i++)
+        {
+            chatMessageAdapter.addMyMessage("안녕하세요.\n테스트 메시지입니다." + i);
+            chatMessageAdapter.addOpponentMessage("안녕하세요." + i);
+            chatMessageAdapter.addMyMessage("이것은 긴 테스트 메시지입니다. 길게 좀 쳐보겠습니다~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            chatMessageAdapter.addOpponentMessage("상대방에서도 긴 테스트 메시지를 쳐보겠습니다~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        }
     }
 }
