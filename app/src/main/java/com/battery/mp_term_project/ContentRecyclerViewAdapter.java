@@ -1,9 +1,11 @@
 package com.battery.mp_term_project;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -37,13 +39,29 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ContentRecyclerViewItem item = mItemList.get(position);
-       /*// holder.user_img.setImageResource(item.getUser_img());
+        /*
+        holder.user_img.setImageResource(item.getUser_img());
         holder.user_name.setText(item.getUser_name());
         holder.user_text.setText(item.getUser_text());
         holder.img1.setImageResource(item.getImg1());
         holder.img2.setImageResource(item.getImg2());
-        holder.img3.setImageResource(item.getImg3());*/
+        holder.img3.setImageResource(item.getImg3());
+        */
 
+        holder.user_text.setOnClickListener(view -> openContentDetail(view, position));
+        holder.img3.setOnClickListener(view -> openContentDetail(view, position));
+        holder.comment_button.setOnClickListener(view -> openContentDetail(view, position));
+    }
+
+    void openContentDetail(View view, int position)
+    {
+        Context context = view.getContext();
+        Intent intent = new Intent(context, ContentDetailActivity.class);
+        //#todo : 추후에는 database에서 데이터를 받아오게 하는 것으로 충분할듯
+        ContentRecyclerViewItem data = mItemList.get(position);
+        intent.putExtra("userName", data.getUser_name());
+        intent.putExtra("userText", data.getUser_text());
+        context.startActivity(intent);
     }
 
     // getItemCount : 전체 데이터의 개수를 리턴
@@ -60,17 +78,19 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
        ImageView img1;
        ImageView img2;
        ImageView img3;
+       Button comment_button;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             // 뷰 객체에 대한 참조
-            /*user_img = itemView.findViewById(R.id.user_img);
+            user_img = itemView.findViewById(R.id.user_img);
             user_name = itemView.findViewById(R.id.user_name);
             user_text = itemView.findViewById(R.id.user_text);
             img1 = itemView.findViewById(R.id.img1);
             img2 = itemView.findViewById(R.id.img2);
-            img3 = itemView.findViewById(R.id.img3);*/
+            img3 = itemView.findViewById(R.id.img3);
+            comment_button = itemView.findViewById(R.id.comment_button);
         }
     }
 }
