@@ -10,6 +10,8 @@ public class Comment {
 
     private String text;
 
+    private int content_id;
+
     public int getId() {
         return id;
     }
@@ -24,5 +26,13 @@ public class Comment {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public int getContent_id() {
+        return content_id;
+    }
+
+    public void setContent_id(int content_id) {
+        this.content_id = content_id;
     }
 }

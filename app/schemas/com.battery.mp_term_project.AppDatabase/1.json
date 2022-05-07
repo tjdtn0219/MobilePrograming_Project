@@ -2,23 +2,17 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "30dc8631fb3f8e3ff7efbf8995ea44df",
+    "identityHash": "a11eb3fbf5c6d34ecf1f09add399ed7e",
     "entities": [
       {
         "tableName": "User",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` TEXT NOT NULL, `password` TEXT, `nickname` TEXT, `contents_id` TEXT, `profileText` TEXT, `profileImage` TEXT, PRIMARY KEY(`uid`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` TEXT NOT NULL, `nickname` TEXT, `contents_id` TEXT, `profileText` TEXT, `profileImage` TEXT, PRIMARY KEY(`uid`))",
         "fields": [
           {
             "fieldPath": "uid",
             "columnName": "uid",
             "affinity": "TEXT",
             "notNull": true
-          },
-          {
-            "fieldPath": "password",
-            "columnName": "password",
-            "affinity": "TEXT",
-            "notNull": false
           },
           {
             "fieldPath": "nickname",
@@ -56,7 +50,7 @@
       },
       {
         "tableName": "Content",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `text` TEXT, `writer_id` TEXT, `likes` INTEGER NOT NULL, `comments_id` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `text` TEXT, `uri` TEXT, `time` INTEGER NOT NULL, `writer_id` TEXT, `likes` INTEGER NOT NULL, `comments_id` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -69,6 +63,18 @@
             "columnName": "text",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "uri",
+            "columnName": "uri",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "time",
+            "columnName": "time",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "writer_id",
@@ -100,7 +106,7 @@
       },
       {
         "tableName": "Comment",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `text` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `text` TEXT, `content_id` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -113,6 +119,12 @@
             "columnName": "text",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "content_id",
+            "columnName": "content_id",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -128,7 +140,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '30dc8631fb3f8e3ff7efbf8995ea44df')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a11eb3fbf5c6d34ecf1f09add399ed7e')"
     ]
   }
 }

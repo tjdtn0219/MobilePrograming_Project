@@ -12,8 +12,6 @@ public class User {
     @NonNull
     private String uid;
 
-    private String password;
-
     private String nickname;
 
     private List<Integer> contents_id;
@@ -28,14 +26,6 @@ public class User {
 
     public void setUid(String uid) {
         this.uid = uid;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getNickname() {

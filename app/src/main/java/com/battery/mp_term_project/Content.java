@@ -1,5 +1,7 @@
 package com.battery.mp_term_project;
 
+import android.net.Uri;
+
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -12,9 +14,13 @@ public class Content {
 
     private String text;
 
+    private List<Uri> uri;
+
+    private long time;
+
     private String writer_id;
 
-    private int likes;
+    private int likes = 0;
 
     private List<Integer> comments_id;
 
@@ -56,5 +62,21 @@ public class Content {
 
     public void setComments_id(List<Integer> comments_id) {
         this.comments_id = comments_id;
+    }
+
+    public List<Uri> getUri() {
+        return uri;
+    }
+
+    public void setUri(List<Uri> uri) {
+        this.uri = uri;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 }
