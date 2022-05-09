@@ -19,4 +19,9 @@
     <string name="main_add_category_dialog_cancel">취소</string>
     <string name="main_add_category_dialog_title">카테고리 문자열을 입력해주세요.</string>
     <string name="main_add_category_dialog_editText_hint">카테고리</string>
+    <string name="contentDetail_content_userNamePlaceHolder">작성자</string>
+    <string name="contentDetail_content_contentTextPlaceHolder">작성글</string>
+    <string name="contentDetail_content_likeTextPlaceHolder">좋아요 10개</string>
+    <string name="contentDetail_comment_userNamePlaceHolder">댓글 작성자</string>
+    <string name="contentDetail_comment_contentTextPlaceHolder">작성댓글</string>
 </resources>

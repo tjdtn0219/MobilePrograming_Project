@@ -29,9 +29,6 @@ public class MainActivity extends AppCompatActivity {
 
     private CategoryAdapter categoryAdapter;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
