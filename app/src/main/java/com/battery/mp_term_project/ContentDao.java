@@ -13,6 +13,9 @@ public interface ContentDao {
     @Query("SELECT * FROM Content")
     List<Content> getAllContents();
 
+    @Query("SELECT * FROM Content ORDER BY time DESC")
+    List<Content> getContentsFromRecent();
+
     @Query("SELECT * FROM Content WHERE id == (:id)")
     List<Content> loadContentsById(int id);
 

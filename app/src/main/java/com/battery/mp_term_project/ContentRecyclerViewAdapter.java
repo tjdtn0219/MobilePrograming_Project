@@ -37,12 +37,12 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ContentRecyclerViewItem item = mItemList.get(position);
-       /*// holder.user_img.setImageResource(item.getUser_img());
+        holder.user_img.setImageURI(item.getUser_img());
         holder.user_name.setText(item.getUser_name());
         holder.user_text.setText(item.getUser_text());
-        holder.img1.setImageResource(item.getImg1());
-        holder.img2.setImageResource(item.getImg2());
-        holder.img3.setImageResource(item.getImg3());*/
+        holder.img1.setImageURI(item.getImg1());
+        holder.img2.setImageURI(item.getImg2());
+        holder.img3.setImageURI(item.getImg3());
 
     }
 
@@ -65,12 +65,12 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
             super(itemView);
 
             // 뷰 객체에 대한 참조
-            /*user_img = itemView.findViewById(R.id.user_img);
+            user_img = itemView.findViewById(R.id.user_img);
             user_name = itemView.findViewById(R.id.user_name);
             user_text = itemView.findViewById(R.id.user_text);
             img1 = itemView.findViewById(R.id.img1);
             img2 = itemView.findViewById(R.id.img2);
-            img3 = itemView.findViewById(R.id.img3);*/
+            img3 = itemView.findViewById(R.id.img3);
         }
     }
 }

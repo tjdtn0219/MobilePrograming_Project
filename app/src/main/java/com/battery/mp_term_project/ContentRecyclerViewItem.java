@@ -1,16 +1,17 @@
 package com.battery.mp_term_project;
 
+import android.net.Uri;
 import android.widget.ImageView;
 
 public class ContentRecyclerViewItem {
-    private int user_img;
+    private Uri user_img;
     private String user_name;
     private String user_text;
-    private int img1;
-    private int img2;
-    private int img3;
+    private Uri img1;
+    private Uri img2;
+    private Uri img3;
 
-    public ContentRecyclerViewItem(int user_img, String user_name, String user_text, int img1, int img2, int img3){
+    public ContentRecyclerViewItem(Uri user_img, String user_name, String user_text, Uri img1, Uri img2, Uri img3){
         this.user_img = user_img;
         this.user_name = user_name;
         this.user_text = user_text;
@@ -21,7 +22,7 @@ public class ContentRecyclerViewItem {
     }
 
 
-    public int getUser_img() {
+    public Uri getUser_img() {
         return user_img;
     }
 
@@ -33,15 +34,15 @@ public class ContentRecyclerViewItem {
         return user_text;
     }
 
-    public int getImg1() {
+    public Uri getImg1() {
         return img1;
     }
 
-    public int getImg2() {
+    public Uri getImg2() {
         return img2;
     }
 
-    public int getImg3() {
+    public Uri getImg3() {
         return img3;
     }
 }

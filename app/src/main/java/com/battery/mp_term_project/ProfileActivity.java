@@ -93,7 +93,7 @@ public class ProfileActivity extends AppCompatActivity {
         List<ContentRecyclerViewItem> itemList = new ArrayList<>();
 
         for(int i = 0 ; i < 100 ; i ++){
-            itemList.add(new ContentRecyclerViewItem(R.id.user_img, "name", "profiletext", R.id.img1, R.id.img2, R.id.img3));
+            //itemList.add(new ContentRecyclerViewItem(R.id.user_img, "name", "profiletext", R.id.img1, R.id.img2, R.id.img3));
         }
 
 

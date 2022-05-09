@@ -38,7 +38,7 @@ public class UploadActivity extends AppCompatActivity{
 
 
     private static final String TAG = "UploadActivity";
-    ArrayList<Uri> uriList = new ArrayList<>();     // 이미지의 uri를 담을 ArrayList 객체
+    ArrayList<String> uriList = new ArrayList<>();     // 이미지의 uri를 담을 ArrayList 객체
     private AppDatabase db = null;
 
     RecyclerView recyclerView;  // 이미지를 보여줄 리사이클러뷰
@@ -132,7 +132,7 @@ public class UploadActivity extends AppCompatActivity{
             if(data.getClipData() == null){     // 이미지를 하나만 선택한 경우
                 Log.e("single choice: ", String.valueOf(data.getData()));
                 Uri imageUri = data.getData();
-                uriList.add(imageUri);
+                uriList.add(imageUri.toString());
 
                 adapter = new MultiImageAdapter(uriList, getApplicationContext());
                 recyclerView.setAdapter(adapter);
@@ -151,7 +151,7 @@ public class UploadActivity extends AppCompatActivity{
                     for (int i = 0; i < clipData.getItemCount(); i++){
                         Uri imageUri = clipData.getItemAt(i).getUri();  // 선택한 이미지들의 uri를 가져온다.
                         try {
-                            uriList.add(imageUri);  //uri를 list에 담는다.
+                            uriList.add(imageUri.toString());  //uri를 list에 담는다.
 
                         } catch (Exception e) {
                             Log.e(TAG, "File select error", e);

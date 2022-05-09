@@ -14,7 +14,7 @@ public class Content {
 
     private String text;
 
-    private List<Uri> uri;
+    private List<String> uri;
 
     private long time;
 
@@ -64,11 +64,11 @@ public class Content {
         this.comments_id = comments_id;
     }
 
-    public List<Uri> getUri() {
+    public List<String> getUri() {
         return uri;
     }
 
-    public void setUri(List<Uri> uri) {
+    public void setUri(List<String> uri) {
         this.uri = uri;
     }
 

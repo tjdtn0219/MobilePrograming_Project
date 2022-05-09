@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -30,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
 
     private CategoryAdapter categoryAdapter;
 
+    private AppDatabase db = null;
+    private List<Content> contentList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -51,8 +55,7 @@ public class MainActivity extends AppCompatActivity {
         categoryAdapter = new CategoryAdapter(this);
         categoryRecyclerView.setAdapter(categoryAdapter);
 
-
-
+        db = AppDatabase.getInstance(this);
 
         //컨첸츠 리사이클러뷰 추가
         mainbindList();
@@ -116,10 +119,33 @@ public class MainActivity extends AppCompatActivity {
 
         List<ContentRecyclerViewItem> itemList = new ArrayList<>();
 
-        for(int i = 0 ; i < 100 ; i ++){
-            itemList.add(new ContentRecyclerViewItem(R.id.user_img, "name", "maintext", R.id.img1, R.id.img2, R.id.img3));
+        //main 스레드에서는 db접근 불가, 새로운 thread 만들어서 접근
+        class InsertRunnable implements Runnable {
+            @Override
+            public void run() {
+                try{
+                    contentList = db.contentDao().getContentsFromRecent();
+//                    for(int i = 0 ; i < contentList.size() ; i ++){
+//                        Log.d("TAGG",Integer.toString(contentList.size()));
+//                        Log.d("TAG1",contentList.get(i).getUri().get(0));
+//                        itemList.add(new ContentRecyclerViewItem(Uri.parse(contentList.get(i).getUri().get(0)), "name", "maintext",
+//                                Uri.parse(contentList.get(i).getUri().get(0)),
+//                                Uri.parse(contentList.get(i).getUri().get(1)),
+//                                Uri.parse(contentList.get(i).getUri().get(2))));
+//                    }
+                    for(int i = 0 ; i < 100 ; i ++){
+                        itemList.add(new ContentRecyclerViewItem(R.id.user_img, "name", "maintext",
+                                R.id.img1, R.id.img2, R.id.img3));
+                    }
+                }
+                catch (Exception e) {
+                    Log.e("Insert Error in Upload", e.toString());
+                }
+            }
         }
-
+        InsertRunnable insertRunnable = new InsertRunnable();
+        Thread uploadThread = new Thread(insertRunnable);
+        uploadThread.start();
 
         RecyclerView mainRecyclerView = findViewById(R.id.main_recycler_view);
 
