@@ -88,9 +88,12 @@ public class LoginActivity extends AppCompatActivity {
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
-                            Log.e("USERRRRR ID", user.getDisplayName());
-                            Log.e("USERRRRR ID", user.getEmail());
-                            //Log.e("USERRRRR ID", user.getPhoneNumber());
+                            Log.d("USERRRR UID", user.getUid());
+                            Log.d("USERRRRR NAME", user.getDisplayName());
+                            Log.d("USERRRRR EMAIL", user.getEmail());
+
+                            ((GlobalVar) getApplication()).setUid(user.getUid());
+
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             //intent.putExtra()
                             startActivity(intent);

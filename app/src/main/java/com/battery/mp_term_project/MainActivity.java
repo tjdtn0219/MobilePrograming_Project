@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -129,6 +130,14 @@ public class MainActivity extends AppCompatActivity {
         mainRecyclerView.setLayoutManager(layoutManager);
 
 
+    }
+
+    @Override
+    protected  void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        String FromUpload = intent.getStringExtra("FromUpload");
+        Log.d("테스트", FromUpload);
     }
 
 }

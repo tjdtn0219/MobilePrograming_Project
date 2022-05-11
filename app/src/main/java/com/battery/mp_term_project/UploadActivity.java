@@ -10,6 +10,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SearchView;
@@ -28,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,12 +39,15 @@ public class UploadActivity extends AppCompatActivity{
 
     private static final String TAG = "UploadActivity";
     ArrayList<Uri> uriList = new ArrayList<>();     // 이미지의 uri를 담을 ArrayList 객체
+    private AppDatabase db = null;
 
     RecyclerView recyclerView;  // 이미지를 보여줄 리사이클러뷰
     MultiImageAdapter adapter;  // 리사이클러뷰에 적용시킬 어댑터
 
+    EditText mUploadText;
     SearchView contentSearchView;
     ImageButton btn_add_photo;
+    Button btn_upload;
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -52,7 +57,6 @@ public class UploadActivity extends AppCompatActivity{
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
-
 
         // 앨범으로 이동하는 버튼
         btn_add_photo = (ImageButton) findViewById(R.id.btn_add_photo);
@@ -64,6 +68,52 @@ public class UploadActivity extends AppCompatActivity{
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
                 intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, 2222);
+            }
+        });
+
+        db = AppDatabase.getInstance(this);
+
+        //main 스레드에서는 db접근 불가, 새로운 thread 만들어서 접근
+        class InsertRunnable implements Runnable {
+
+            private Content content;
+
+            public InsertRunnable(Content c) {
+                content = c;
+            }
+
+            @Override
+            public void run() {
+                try{
+                    db.contentDao().Insert(content);
+                    Log.d("TAGGGG", content.getText());
+                }
+                catch (Exception e) {
+                    Log.e("Insert Error in Upload", e.toString());
+                }
+            }
+        }
+
+        mUploadText = (EditText) findViewById(R.id.txt_upload);
+        btn_upload = (Button) findViewById(R.id.button);
+        btn_upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Content content = new Content();
+                content.setWriter_id(((GlobalVar) getApplication()).getUid());
+                content.setText(mUploadText.getText().toString());
+                content.setUri(uriList);
+                long now = System.currentTimeMillis();
+                content.setTime(now);
+
+                InsertRunnable insertRunnable = new InsertRunnable(content);
+                Thread uploadThread = new Thread(insertRunnable);
+                uploadThread.start();
+
+                Intent intent = new Intent(view.getContext(), MainActivity.class);
+                intent.putExtra("FromUpload", "게시글을 성공적으로 업로드 하였습니다.");
+                startActivity(intent);
+
             }
         });
 
