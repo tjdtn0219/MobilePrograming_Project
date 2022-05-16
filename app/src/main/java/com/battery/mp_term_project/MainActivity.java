@@ -22,7 +22,14 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -57,8 +64,33 @@ public class MainActivity extends AppCompatActivity {
 
         db = AppDatabase.getInstance(this);
 
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference();
+
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("id", "user1");
+        data.put("age", 25);
+        data.put("name", "John");
+        myRef.child("Users").child("userinfo1").setValue(data);
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Post object and use the values to update the UI
+                // ..
+                Log.e("osslog", dataSnapshot.toString());
+                Log.e("osslog", dataSnapshot.getValue().toString());
+//                Log.e("osslog", dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+            }
+        };
+        myRef.addValueEventListener(postListener);
+
         //컨첸츠 리사이클러뷰 추가
-        mainbindList();
+        //mainbindList();
 
     }
 
@@ -133,9 +165,13 @@ public class MainActivity extends AppCompatActivity {
 //                                Uri.parse(contentList.get(i).getUri().get(1)),
 //                                Uri.parse(contentList.get(i).getUri().get(2))));
 //                    }
+
+                    String temp_s = "uri";
+                    Uri uri = Uri.parse(temp_s);
                     for(int i = 0 ; i < 100 ; i ++){
-                        itemList.add(new ContentRecyclerViewItem(R.id.user_img, "name", "maintext",
-                                R.id.img1, R.id.img2, R.id.img3));
+                        itemList.add(new ContentRecyclerViewItem(uri,
+                                "name", "maintext",
+                                uri, uri, uri));
                     }
                 }
                 catch (Exception e) {
@@ -143,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+
         InsertRunnable insertRunnable = new InsertRunnable();
         Thread uploadThread = new Thread(insertRunnable);
         uploadThread.start();
