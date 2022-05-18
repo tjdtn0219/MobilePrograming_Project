@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
     private LayoutInflater inflater;
     private CategoryAdapter categoryAdapter;
+    private RecyclerView mRecyclerView;
+    private ContentRecyclerViewAdapter contentRecyclerViewAdapter = null;
     private ArrayList<Content> contentList;
     private User user;
     private DatabaseReference myRef;
@@ -134,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         contentList = new ArrayList<Content>();
         myRef = FirebaseDatabase.getInstance().getReference();
         Query myTopPostsQuery = myRef.child("Contents");
-//        Query myFindUserById = myRef.child("Users").orderByChild("id").equalTo("");
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
 
         ValueEventListener postListener = new ValueEventListener() {
             @Override
@@ -150,6 +152,12 @@ public class MainActivity extends AppCompatActivity {
                     itemList.add(new ContentRecyclerViewItem(null,
                             content.getUser().getName(), content.getText(), content.getImages()));
                 }
+                RecyclerView mainRecyclerView = findViewById(R.id.main_recycler_view);
+
+                ContentRecyclerViewAdapter adapter = new ContentRecyclerViewAdapter(itemList);
+                mainRecyclerView.setAdapter(adapter);
+
+                mainRecyclerView.setLayoutManager(layoutManager);
             }
 
             @Override
@@ -157,22 +165,12 @@ public class MainActivity extends AppCompatActivity {
                 // Getting Post failed, log a message
             }
         };
-
         myTopPostsQuery.addValueEventListener(postListener);
 
 //        for(int i = 0 ; i < contentList.size() ; i ++){
 //            itemList.add(new ContentRecyclerViewItem(null, ,
 //                            "maintext", R.id.img1, R.id.img2, R.id.img3));
 //        }
-
-        RecyclerView mainRecyclerView = findViewById(R.id.main_recycler_view);
-
-        ContentRecyclerViewAdapter adapter = new ContentRecyclerViewAdapter(itemList);
-        mainRecyclerView.setAdapter(adapter);
-
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        mainRecyclerView.setLayoutManager(layoutManager);
-
 
     }
     @Override
