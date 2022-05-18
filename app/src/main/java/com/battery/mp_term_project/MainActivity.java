@@ -1,5 +1,7 @@
 package com.battery.mp_term_project;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,25 +23,29 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
     private LayoutInflater inflater;
-
     private CategoryAdapter categoryAdapter;
-
-    private AppDatabase db = null;
-    private List<Content> contentList;
+    private ArrayList<Content> contentList;
+    private User user;
+    private DatabaseReference myRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,35 +68,10 @@ public class MainActivity extends AppCompatActivity {
         categoryAdapter = new CategoryAdapter(this);
         categoryRecyclerView.setAdapter(categoryAdapter);
 
-        db = AppDatabase.getInstance(this);
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference();
-
-        HashMap<String, Object> data = new HashMap<>();
-        data.put("id", "user1");
-        data.put("age", 25);
-        data.put("name", "John");
-        myRef.child("Users").child("userinfo1").setValue(data);
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Post object and use the values to update the UI
-                // ..
-                Log.e("osslog", dataSnapshot.toString());
-                Log.e("osslog", dataSnapshot.getValue().toString());
-//                Log.e("osslog", dataSnapshot.getKey());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-            }
-        };
-        myRef.addValueEventListener(postListener);
+//        db = AppDatabase.getInstance(this);
 
         //컨첸츠 리사이클러뷰 추가
-        //mainbindList();
+        mainbindList();
 
     }
 
@@ -150,39 +131,39 @@ public class MainActivity extends AppCompatActivity {
     private void mainbindList(){
 
         List<ContentRecyclerViewItem> itemList = new ArrayList<>();
+        contentList = new ArrayList<Content>();
+        myRef = FirebaseDatabase.getInstance().getReference();
+        Query myTopPostsQuery = myRef.child("Contents");
+//        Query myFindUserById = myRef.child("Users").orderByChild("id").equalTo("");
 
-        //main 스레드에서는 db접근 불가, 새로운 thread 만들어서 접근
-        class InsertRunnable implements Runnable {
+        ValueEventListener postListener = new ValueEventListener() {
             @Override
-            public void run() {
-                try{
-                    contentList = db.contentDao().getContentsFromRecent();
-//                    for(int i = 0 ; i < contentList.size() ; i ++){
-//                        Log.d("TAGG",Integer.toString(contentList.size()));
-//                        Log.d("TAG1",contentList.get(i).getUri().get(0));
-//                        itemList.add(new ContentRecyclerViewItem(Uri.parse(contentList.get(i).getUri().get(0)), "name", "maintext",
-//                                Uri.parse(contentList.get(i).getUri().get(0)),
-//                                Uri.parse(contentList.get(i).getUri().get(1)),
-//                                Uri.parse(contentList.get(i).getUri().get(2))));
-//                    }
-
-                    String temp_s = "uri";
-                    Uri uri = Uri.parse(temp_s);
-                    for(int i = 0 ; i < 100 ; i ++){
-                        itemList.add(new ContentRecyclerViewItem(uri,
-                                "name", "maintext",
-                                uri, uri, uri));
-                    }
-                }
-                catch (Exception e) {
-                    Log.e("Insert Error in Upload", e.toString());
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.e("osslog", dataSnapshot.toString());
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Log.e("TAG", "TAG");
+                    Log.e("TAG1", ((GlobalVar) getApplication()).getCurrent_user().getUid());
+                    Content content = snapshot.getValue(Content.class);
+                    Log.e("TAG2", content.getUser().getName());
+                    contentList.add(content);
+                    Log.e("for", content.getUser().getName());
+                    itemList.add(new ContentRecyclerViewItem(null,
+                            content.getUser().getName(), content.getText(), content.getImages()));
                 }
             }
-        }
 
-        InsertRunnable insertRunnable = new InsertRunnable();
-        Thread uploadThread = new Thread(insertRunnable);
-        uploadThread.start();
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+            }
+        };
+
+        myTopPostsQuery.addValueEventListener(postListener);
+
+//        for(int i = 0 ; i < contentList.size() ; i ++){
+//            itemList.add(new ContentRecyclerViewItem(null, ,
+//                            "maintext", R.id.img1, R.id.img2, R.id.img3));
+//        }
 
         RecyclerView mainRecyclerView = findViewById(R.id.main_recycler_view);
 
@@ -194,13 +175,15 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
     @Override
     protected  void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
+        String toastWords;
         String FromUpload = intent.getStringExtra("FromUpload");
-        Log.d("테스트", FromUpload);
+        toastWords = FromUpload;
+        Toast.makeText(getApplicationContext(), toastWords, Toast.LENGTH_SHORT).show();
+//        Log.d("테스트", FromUpload);
     }
 
 }

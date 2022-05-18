@@ -1,22 +1,19 @@
 package com.battery.mp_term_project;
 
-import androidx.annotation.NonNull;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
 import java.util.List;
 
-@Entity
 public class User {
-    @PrimaryKey
-    @NonNull
     private String uid;
     private String name;
     private List<Integer> contents;
     private String profileText;
     private String profileImage;
 
-    public User(@NonNull String uid, String name, List<Integer> contents, String profileText, String profileImage) {
+    public User() {
+
+    }
+
+    public User(String uid, String name, List<Integer> contents, String profileText, String profileImage) {
         this.uid = uid;
         this.name = name;
         this.contents = contents;
@@ -24,12 +21,11 @@ public class User {
         this.profileImage = profileImage;
     }
 
-    @NonNull
     public String getUid() {
         return uid;
     }
 
-    public void setUid(@NonNull String uid) {
+    public void setUid(String uid) {
         this.uid = uid;
     }
 

@@ -28,6 +28,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -39,7 +41,6 @@ public class UploadActivity extends AppCompatActivity{
 
     private static final String TAG = "UploadActivity";
     ArrayList<String> uriList = new ArrayList<>();     // 이미지의 uri를 담을 ArrayList 객체
-    private AppDatabase db = null;
 
     RecyclerView recyclerView;  // 이미지를 보여줄 리사이클러뷰
     MultiImageAdapter adapter;  // 리사이클러뷰에 적용시킬 어댑터
@@ -71,49 +72,30 @@ public class UploadActivity extends AppCompatActivity{
             }
         });
 
-        db = AppDatabase.getInstance(this);
-
-        //main 스레드에서는 db접근 불가, 새로운 thread 만들어서 접근
-        class InsertRunnable implements Runnable {
-
-            private Content content;
-
-            public InsertRunnable(Content c) {
-                content = c;
-            }
-
-            @Override
-            public void run() {
-                try{
-                    db.contentDao().Insert(content);
-                    Log.d("TAGGGG", content.getText());
-                }
-                catch (Exception e) {
-                    Log.e("Insert Error in Upload", e.toString());
-                }
-            }
-        }
-
         mUploadText = (EditText) findViewById(R.id.txt_upload);
         btn_upload = (Button) findViewById(R.id.button);
         btn_upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Content content = new Content();
-                content.setWriter_id(((GlobalVar) getApplication()).getUid());
+//                content.setWriter_id(((GlobalVar) getApplication()).getUid());
+//                content.setWriter_id(((GlobalVar) getApplication()).getCurrent_user().getUid());
+                content.setUser(((GlobalVar) getApplication()).getCurrent_user());
                 content.setText(mUploadText.getText().toString());
-                content.setUri(uriList);
+                content.setImages(uriList);
                 long now = System.currentTimeMillis();
                 content.setTime(now);
+                content.setCid(1);
 
-                InsertRunnable insertRunnable = new InsertRunnable(content);
-                Thread uploadThread = new Thread(insertRunnable);
-                uploadThread.start();
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference();
+
+                myRef.child("Contents").child(((GlobalVar) getApplication()).getCurrent_user().getUid() + "_"+Long.toString(now))
+                        .setValue(content);//Push to RDB
 
                 Intent intent = new Intent(view.getContext(), MainActivity.class);
                 intent.putExtra("FromUpload", "게시글을 성공적으로 업로드 하였습니다.");
                 startActivity(intent);
-
             }
         });
 

@@ -3,23 +3,23 @@ package com.battery.mp_term_project;
 import android.app.Application;
 
 public class GlobalVar extends Application {
-    private String uid;
+    private User current_user;
 
     @Override
     public void onCreate(){
         super.onCreate();
-        uid = "";
+        current_user = null;
     }
     @Override
     public void onTerminate(){
         super.onTerminate();
     }
 
-    public String getUid() {
-        return uid;
+    public User getCurrent_user() {
+        return current_user;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public void setCurrent_user(User current_user) {
+        this.current_user = current_user;
     }
 }

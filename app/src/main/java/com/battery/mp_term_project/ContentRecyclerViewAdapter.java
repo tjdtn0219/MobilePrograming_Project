@@ -1,6 +1,7 @@
 package com.battery.mp_term_project;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,13 +37,14 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
     // onBindViewHolder : position에 해당하는 데이터를 뷰홀더의 아이템뷰에 표시
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        ContentRecyclerViewItem item = mItemList.get(position);
+        ContentRecyclerViewItem item = mItemList.get(getItemCount()-1-position);
         holder.user_img.setImageURI(item.getUser_img());
         holder.user_name.setText(item.getUser_name());
         holder.user_text.setText(item.getUser_text());
-        holder.img1.setImageURI(item.getImg1());
-        holder.img2.setImageURI(item.getImg2());
-        holder.img3.setImageURI(item.getImg3());
+        holder.img1.setImageURI(item.getImage_list().get(0));
+        holder.img1.setImageURI(item.getImage_list().get(1));
+        holder.img1.setImageURI(item.getImage_list().get(2));
+
 
     }
 

@@ -3,46 +3,55 @@ package com.battery.mp_term_project;
 import android.net.Uri;
 import android.widget.ImageView;
 
+import java.util.List;
+
 public class ContentRecyclerViewItem {
     private Uri user_img;
     private String user_name;
     private String user_text;
-    private Uri img1;
-    private Uri img2;
-    private Uri img3;
+    private List<Uri> image_list;
 
-    public ContentRecyclerViewItem(Uri user_img, String user_name, String user_text, Uri img1, Uri img2, Uri img3){
+    public ContentRecyclerViewItem(Uri user_img, String user_name, String user_text, List<String> image_list) {
         this.user_img = user_img;
         this.user_name = user_name;
         this.user_text = user_text;
-        this.img1 = img1;
-        this.img2 = img2;
-        this.img3 = img3;
-
+        if(image_list != null) {
+            for(String uri : image_list) {
+                this.image_list.add(Uri.parse(uri));
+            }
+        }
+        else image_list = null;
     }
-
 
     public Uri getUser_img() {
         return user_img;
+    }
+
+    public void setUser_img(Uri user_img) {
+        this.user_img = user_img;
     }
 
     public String getUser_name() {
         return user_name;
     }
 
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
+    }
+
     public String getUser_text() {
         return user_text;
     }
 
-    public Uri getImg1() {
-        return img1;
+    public void setUser_text(String user_text) {
+        this.user_text = user_text;
     }
 
-    public Uri getImg2() {
-        return img2;
+    public List<Uri> getImage_list() {
+        return image_list;
     }
 
-    public Uri getImg3() {
-        return img3;
+    public void setImage_list(List<Uri> image_list) {
+        this.image_list = image_list;
     }
 }

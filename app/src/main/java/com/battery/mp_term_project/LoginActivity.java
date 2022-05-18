@@ -92,7 +92,9 @@ public class LoginActivity extends AppCompatActivity {
                             Log.d("USERRRRR NAME", user.getDisplayName());
                             Log.d("USERRRRR EMAIL", user.getEmail());
 
-                            ((GlobalVar) getApplication()).setUid(user.getUid());
+//                            ((GlobalVar) getApplication()).setUid(user.getUid());
+                            User userdata = new User(user.getUid(), "이름없음", null, "프로필을 작성하세요.", null);
+                            ((GlobalVar) getApplication()).setCurrent_user(userdata);
 
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             //intent.putExtra()
