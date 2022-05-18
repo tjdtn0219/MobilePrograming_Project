@@ -10,9 +10,11 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -22,6 +24,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,7 +39,17 @@ public class ProfileActivity extends AppCompatActivity {
 
     SearchView contentSearchView;
     ImageView profile_pt;
+    TextView profile_name;
+    TextView profile_text;
+    EditText profile_name_edit;
+    EditText profile_text_edit;
     Button btn_chat;
+
+    private List<ContentRecyclerViewItem> itemList;
+    private ContentRecyclerViewAdapter contentRecyclerViewAdapter;
+    private RecyclerView.LayoutManager layoutManager;
+    private DatabaseReference myRef;
+
 
     //프로필 사진 요청코드
     private static final int REQUEST_CODE = 0;
@@ -41,13 +59,11 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
         //컨첸츠 리사이클러뷰 추가
         profilebindList();
-
 
         // 앨범으로 이동하는 버튼
         profile_pt = (ImageView) findViewById(R.id.profile_pt);
@@ -58,6 +74,30 @@ public class ProfileActivity extends AppCompatActivity {
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(intent, REQUEST_CODE);
+            }
+        });
+        profile_name = (TextView) findViewById(R.id.profile_name);
+        profile_name.setText(((GlobalVar) getApplication()).getCurrent_user().getName());
+        profile_name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                profile_name.setVisibility(View.INVISIBLE);
+                profile_name_edit = (EditText) findViewById(R.id.profile_name_edit);
+                profile_name_edit.setVisibility(View.VISIBLE);
+                profile_name_edit.setText(((GlobalVar) getApplication()).getCurrent_user().getName());
+            }
+        });
+
+        profile_text = (TextView) findViewById(R.id.profile_text);
+        profile_text.setText(((GlobalVar) getApplication()).getCurrent_user().getProfileText());
+        profile_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                profile_text.setVisibility(View.INVISIBLE);
+                profile_text_edit = (EditText) findViewById(R.id.profile_text_edit);
+                profile_text_edit.setVisibility(View.VISIBLE);
+                profile_text_edit.setText(((GlobalVar) getApplication()).getCurrent_user().getProfileText());
+
             }
         });
 
@@ -90,20 +130,34 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void profilebindList(){
 
-        List<ContentRecyclerViewItem> itemList = new ArrayList<>();
+        itemList = new ArrayList<>();
+        layoutManager = new LinearLayoutManager(this);
+        myRef = FirebaseDatabase.getInstance().getReference();
+        Query myTopPostsQuery = myRef.child("Contents");
 
-        for(int i = 0 ; i < 100 ; i ++){
-            //itemList.add(new ContentRecyclerViewItem(R.id.user_img, "name", "profiletext", R.id.img1, R.id.img2, R.id.img3));
-        }
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Content content = snapshot.getValue(Content.class);
+                    itemList.add(new ContentRecyclerViewItem(null,
+                            content.getUser().getName(), content.getText(), content.getImages()));
+                }
+                RecyclerView mainRecyclerView = findViewById(R.id.profile_recycler_view);
 
-        RecyclerView mainRecyclerView = findViewById(R.id.profile_recycler_view);
+                contentRecyclerViewAdapter = new ContentRecyclerViewAdapter(itemList);
+                mainRecyclerView.setAdapter(contentRecyclerViewAdapter);
 
-        ContentRecyclerViewAdapter adapter = new ContentRecyclerViewAdapter(itemList);
-        mainRecyclerView.setAdapter(adapter);
+                mainRecyclerView.setLayoutManager(layoutManager);
+            }
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        mainRecyclerView.setLayoutManager(layoutManager);
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+            }
+        };
+        myTopPostsQuery.addValueEventListener(postListener);
 
 
     }

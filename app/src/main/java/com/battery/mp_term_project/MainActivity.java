@@ -43,18 +43,13 @@ public class MainActivity extends AppCompatActivity {
 
     private LayoutInflater inflater;
     private CategoryAdapter categoryAdapter;
-    private RecyclerView mRecyclerView;
-    private ContentRecyclerViewAdapter contentRecyclerViewAdapter = null;
-    private ArrayList<Content> contentList;
-    private User user;
     private DatabaseReference myRef;
+    private List<ContentRecyclerViewItem> itemList;
+    private ContentRecyclerViewAdapter contentRecyclerViewAdapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-//        Intent intent = getIntent();LoginActivity에서 startActivityForResult, putExtra 한 거 받기
-//        String nickName = intent.getStringExtra("nickname");LoginActivity에서 가져옴
-//        String photoURL = intent.getStringExtra("photoURL");LoginActivity에서 가져옴
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -132,30 +127,24 @@ public class MainActivity extends AppCompatActivity {
 
     private void mainbindList(){
 
-        List<ContentRecyclerViewItem> itemList = new ArrayList<>();
-        contentList = new ArrayList<Content>();
+        itemList = new ArrayList<>();
+        layoutManager = new LinearLayoutManager(this);
         myRef = FirebaseDatabase.getInstance().getReference();
         Query myTopPostsQuery = myRef.child("Contents");
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
 
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.e("osslog", dataSnapshot.toString());
+
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Log.e("TAG", "TAG");
-                    Log.e("TAG1", ((GlobalVar) getApplication()).getCurrent_user().getUid());
                     Content content = snapshot.getValue(Content.class);
-                    Log.e("TAG2", content.getUser().getName());
-                    contentList.add(content);
-                    Log.e("for", content.getUser().getName());
                     itemList.add(new ContentRecyclerViewItem(null,
                             content.getUser().getName(), content.getText(), content.getImages()));
                 }
                 RecyclerView mainRecyclerView = findViewById(R.id.main_recycler_view);
 
-                ContentRecyclerViewAdapter adapter = new ContentRecyclerViewAdapter(itemList);
-                mainRecyclerView.setAdapter(adapter);
+                contentRecyclerViewAdapter = new ContentRecyclerViewAdapter(itemList);
+                mainRecyclerView.setAdapter(contentRecyclerViewAdapter);
 
                 mainRecyclerView.setLayoutManager(layoutManager);
             }
@@ -167,15 +156,13 @@ public class MainActivity extends AppCompatActivity {
         };
         myTopPostsQuery.addValueEventListener(postListener);
 
-//        for(int i = 0 ; i < contentList.size() ; i ++){
-//            itemList.add(new ContentRecyclerViewItem(null, ,
-//                            "maintext", R.id.img1, R.id.img2, R.id.img3));
-//        }
-
     }
     @Override
     protected  void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+
+        mainbindList();
+
         setIntent(intent);
         String toastWords;
         String FromUpload = intent.getStringExtra("FromUpload");
