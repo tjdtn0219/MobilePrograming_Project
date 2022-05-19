@@ -25,13 +25,13 @@ public class Converters {
     }
 
     @TypeConverter
-    public static List<Uri> fromStringToUriList(String value) {
-        Type listType = new TypeToken<List<Uri>>() {}.getType();
+    public static List<String> fromStringToStringList(String value) {
+        Type listType = new TypeToken<List<String>>() {}.getType();
         return new Gson().fromJson(value, listType);
     }
 
     @TypeConverter
-    public static String fromUriList(List<Uri> list) {
+    public static String fromStringList(List<String> list) {
         Gson gson = new Gson();
         String json = gson.toJson(list);
         return json;

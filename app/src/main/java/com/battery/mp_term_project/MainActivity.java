@@ -1,5 +1,7 @@
 package com.battery.mp_term_project;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -8,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,22 +23,33 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
     private LayoutInflater inflater;
-
     private CategoryAdapter categoryAdapter;
+    private DatabaseReference myRef;
+    private List<ContentRecyclerViewItem> itemList;
+    private ContentRecyclerViewAdapter contentRecyclerViewAdapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-//        Intent intent = getIntent();LoginActivity에서 startActivityForResult, putExtra 한 거 받기
-//        String nickName = intent.getStringExtra("nickname");LoginActivity에서 가져옴
-//        String photoURL = intent.getStringExtra("photoURL");LoginActivity에서 가져옴
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -51,8 +65,7 @@ public class MainActivity extends AppCompatActivity {
         categoryAdapter = new CategoryAdapter(this);
         categoryRecyclerView.setAdapter(categoryAdapter);
 
-
-
+//        db = AppDatabase.getInstance(this);
 
         //컨첸츠 리사이클러뷰 추가
         mainbindList();
@@ -114,30 +127,48 @@ public class MainActivity extends AppCompatActivity {
 
     private void mainbindList(){
 
-        List<ContentRecyclerViewItem> itemList = new ArrayList<>();
+        itemList = new ArrayList<>();
+        layoutManager = new LinearLayoutManager(this);
+        myRef = FirebaseDatabase.getInstance().getReference();
+        Query myTopPostsQuery = myRef.child("Contents");
 
-        for(int i = 0 ; i < 100 ; i ++){
-            itemList.add(new ContentRecyclerViewItem(R.id.user_img, "name", "maintext", R.id.img1, R.id.img2, R.id.img3));
-        }
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Content content = snapshot.getValue(Content.class);
+                    itemList.add(new ContentRecyclerViewItem(null,
+                            content.getUser().getName(), content.getText(), content.getImages()));
+                }
+                RecyclerView mainRecyclerView = findViewById(R.id.main_recycler_view);
 
-        RecyclerView mainRecyclerView = findViewById(R.id.main_recycler_view);
+                contentRecyclerViewAdapter = new ContentRecyclerViewAdapter(itemList);
+                mainRecyclerView.setAdapter(contentRecyclerViewAdapter);
 
-        ContentRecyclerViewAdapter adapter = new ContentRecyclerViewAdapter(itemList);
-        mainRecyclerView.setAdapter(adapter);
+                mainRecyclerView.setLayoutManager(layoutManager);
+            }
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        mainRecyclerView.setLayoutManager(layoutManager);
-
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+            }
+        };
+        myTopPostsQuery.addValueEventListener(postListener);
 
     }
-
     @Override
     protected  void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+
+        mainbindList();
+
         setIntent(intent);
+        String toastWords;
         String FromUpload = intent.getStringExtra("FromUpload");
-        Log.d("테스트", FromUpload);
+        toastWords = FromUpload;
+        Toast.makeText(getApplicationContext(), toastWords, Toast.LENGTH_SHORT).show();
+//        Log.d("테스트", FromUpload);
     }
 
 }

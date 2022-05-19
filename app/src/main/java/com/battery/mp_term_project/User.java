@@ -1,24 +1,25 @@
 package com.battery.mp_term_project;
 
-import androidx.annotation.NonNull;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
 import java.util.List;
 
-@Entity
 public class User {
-    @PrimaryKey
-    @NonNull
     private String uid;
-
-    private String nickname;
-
-    private List<Integer> contents_id;
-
+    private String name;
+    private List<Integer> contents;
     private String profileText;
-
     private String profileImage;
+
+    public User() {
+
+    }
+
+    public User(String uid, String name, List<Integer> contents, String profileText, String profileImage) {
+        this.uid = uid;
+        this.name = name;
+        this.contents = contents;
+        this.profileText = profileText;
+        this.profileImage = profileImage;
+    }
 
     public String getUid() {
         return uid;
@@ -28,20 +29,20 @@ public class User {
         this.uid = uid;
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getName() {
+        return name;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public List<Integer> getContents_id() {
-        return contents_id;
+    public List<Integer> getContents() {
+        return contents;
     }
 
-    public void setContents_id(List<Integer> contents_id) {
-        this.contents_id = contents_id;
+    public void setContents(List<Integer> contents) {
+        this.contents = contents;
     }
 
     public String getProfileText() {

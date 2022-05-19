@@ -43,46 +43,48 @@
             android:text="texttexttexttexttexttexttexttexttexttexttexttexttexttext"
             android:textSize="20sp" />
 
+    <LinearLayout
+        android:id="@+id/img_layout1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/edge"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/user_text">
+
+        <ImageView
+            android:id="@+id/img1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/factory" />
+
         <LinearLayout
-            app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/user_text"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/edge"
-            android:orientation="horizontal">
+            android:id="@+id/img_layout2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/img1"
-                app:srcCompat="@drawable/factory"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <LinearLayout
+                android:id="@+id/img2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:orientation="vertical">
+                android:layout_weight="1"
+                app:srcCompat="@drawable/factory" />
 
-                <ImageView
-                    android:id="@+id/img2"
-                    app:srcCompat="@drawable/factory"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
+            <ImageView
+                android:id="@+id/img3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#D7000000"
+                app:srcCompat="@drawable/factory" />
 
-                <ImageView
-                    android:id="@+id/img3"
-                    app:srcCompat="@drawable/factory"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="#D7000000" />
-
-            </LinearLayout>
         </LinearLayout>
+    </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linearLayout2"

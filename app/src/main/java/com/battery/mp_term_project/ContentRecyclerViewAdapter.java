@@ -1,12 +1,14 @@
 package com.battery.mp_term_project;
 
 import android.content.Context;
+import android.net.Uri;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecyclerViewAdapter.ViewHolder> {
-    private List<ContentRecyclerViewItem> mItemList;
+    private List<ContentRecyclerViewItem> mItemList = null;
 
     public ContentRecyclerViewAdapter(List<ContentRecyclerViewItem> mItemList) {
         this.mItemList = mItemList;
@@ -38,15 +40,29 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
     // onBindViewHolder : position에 해당하는 데이터를 뷰홀더의 아이템뷰에 표시
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+//        ContentRecyclerViewItem item = mItemList.get(getItemCount()-1-position);
         ContentRecyclerViewItem item = mItemList.get(position);
-        /*
-        holder.user_img.setImageResource(item.getUser_img());
+
+        holder.user_img.setImageURI(item.getUser_img());
         holder.user_name.setText(item.getUser_name());
         holder.user_text.setText(item.getUser_text());
-        holder.img1.setImageResource(item.getImg1());
-        holder.img2.setImageResource(item.getImg2());
-        holder.img3.setImageResource(item.getImg3());
-        */
+        if(item.getImage_list() == null) {
+            holder.img_layout1.setVisibility(View.GONE);
+        }
+        else if(item.getImage_list().size() == 1) {
+            holder.img1.setImageURI(item.getImage_list().get(0));
+            holder.img_layout2.setVisibility(View.GONE);
+        }
+        else if(item.getImage_list().size() == 2) {
+            holder.img1.setImageURI(item.getImage_list().get(0));
+            holder.img2.setImageURI(item.getImage_list().get(1));
+            holder.img_layout2.setVisibility(View.GONE);
+        }
+        else {
+            holder.img1.setImageURI(item.getImage_list().get(0));
+            holder.img2.setImageURI(item.getImage_list().get(1));
+            holder.img3.setImageURI(item.getImage_list().get(2));
+        }
 
         holder.user_text.setOnClickListener(view -> openContentDetail(view, position));
         holder.img3.setOnClickListener(view -> openContentDetail(view, position));
@@ -75,6 +91,8 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
        ImageView user_img;
        TextView user_name;
        TextView user_text;
+       LinearLayout img_layout1;
+       LinearLayout img_layout2;
        ImageView img1;
        ImageView img2;
        ImageView img3;
@@ -87,6 +105,8 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
             user_img = itemView.findViewById(R.id.user_img);
             user_name = itemView.findViewById(R.id.user_name);
             user_text = itemView.findViewById(R.id.user_text);
+            img_layout1 = itemView.findViewById(R.id.img_layout1);
+            img_layout2 = itemView.findViewById(R.id.img_layout2);
             img1 = itemView.findViewById(R.id.img1);
             img2 = itemView.findViewById(R.id.img2);
             img3 = itemView.findViewById(R.id.img3);
