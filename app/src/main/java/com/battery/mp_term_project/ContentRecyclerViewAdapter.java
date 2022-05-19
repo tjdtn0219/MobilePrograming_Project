@@ -2,9 +2,11 @@ package com.battery.mp_term_project;
 
 import android.content.Context;
 import android.net.Uri;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -61,6 +63,21 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
             holder.img2.setImageURI(item.getImage_list().get(1));
             holder.img3.setImageURI(item.getImage_list().get(2));
         }
+
+        holder.user_text.setOnClickListener(view -> openContentDetail(view, position));
+        holder.img3.setOnClickListener(view -> openContentDetail(view, position));
+        holder.comment_button.setOnClickListener(view -> openContentDetail(view, position));
+    }
+
+    void openContentDetail(View view, int position)
+    {
+        Context context = view.getContext();
+        Intent intent = new Intent(context, ContentDetailActivity.class);
+        //#todo : 추후에는 database에서 데이터를 받아오게 하는 것으로 충분할듯
+        ContentRecyclerViewItem data = mItemList.get(position);
+        intent.putExtra("userName", data.getUser_name());
+        intent.putExtra("userText", data.getUser_text());
+        context.startActivity(intent);
     }
 
     // getItemCount : 전체 데이터의 개수를 리턴
@@ -79,6 +96,7 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
        ImageView img1;
        ImageView img2;
        ImageView img3;
+       Button comment_button;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -92,6 +110,7 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
             img1 = itemView.findViewById(R.id.img1);
             img2 = itemView.findViewById(R.id.img2);
             img3 = itemView.findViewById(R.id.img3);
+            comment_button = itemView.findViewById(R.id.comment_button);
         }
     }
 }
