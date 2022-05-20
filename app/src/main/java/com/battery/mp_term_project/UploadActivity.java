@@ -73,6 +73,7 @@ public class UploadActivity extends AppCompatActivity{
         });
 
         mUploadText = (EditText) findViewById(R.id.txt_upload);
+        //업로드 버튼
         btn_upload = (Button) findViewById(R.id.button);
         btn_upload.setOnClickListener(new View.OnClickListener() {
             @Override

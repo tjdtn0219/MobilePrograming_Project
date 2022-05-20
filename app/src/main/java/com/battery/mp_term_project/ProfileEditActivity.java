@@ -64,7 +64,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         profile_text = (EditText) findViewById(R.id.profile_text);
         profile_text.setText(((GlobalVar) getApplication()).getCurrent_user().getProfileText());
 
-        //프로필 이름, 글 수정하는 버튼
+        //프로필 이름, 글 수정 완료 버튼
         btn_Edit = (Button) findViewById(R.id.btn_Edit);
         btn_Edit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +72,19 @@ public class ProfileEditActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
                 intent.putExtra("name", profile_name.getText().toString());
                 intent.putExtra("text", profile_text.getText().toString());
+//                intent.putExtra("image", profile_text.getText().toString());
+
+                User userdata = ((GlobalVar) getApplication()).getCurrent_user();
+                userdata.setName(profile_name.getText().toString());
+                userdata.setProfileText(profile_text.getText().toString());
+//                userdata.setProfileImage();
+                ((GlobalVar) getApplication()).setCurrent_user(userdata);
+
+                DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
+                myRef.child("Users")
+                        .child(((GlobalVar) getApplication()).getCurrent_user().getUid())
+                        .setValue(userdata);//Push to RDB
+
 
                 startActivity(intent);
             }

@@ -65,8 +65,6 @@ public class MainActivity extends AppCompatActivity {
         categoryAdapter = new CategoryAdapter(this);
         categoryRecyclerView.setAdapter(categoryAdapter);
 
-//        db = AppDatabase.getInstance(this);
-
         //컨첸츠 리사이클러뷰 추가
         mainbindList();
 
