@@ -140,9 +140,9 @@ public class ContentDetailAdapter extends RecyclerView.Adapter<RecyclerView.View
         public CommentViewHolder(@NonNull View itemView)
         {
             super(itemView);
-            userNameText = itemView.findViewById(R.id.commentUserNameText);
-            userProfileImageButton = itemView.findViewById(R.id.commentUserProfileImageButton);
-            contentText = itemView.findViewById(R.id.commentContentText);
+            userNameText = itemView.findViewById(R.id.profileUserName);
+            userProfileImageButton = itemView.findViewById(R.id.profileImageButton);
+            contentText = itemView.findViewById(R.id.profileText);
         }
 
         public void setData(ContentDetailData data)

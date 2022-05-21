@@ -14,13 +14,23 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecyclerViewAdapter.ViewHolder> {
     private List<ContentRecyclerViewItem> mItemList = null;
 
+    public ContentRecyclerViewAdapter() {
+        mItemList = new ArrayList<>();
+    }
+
     public ContentRecyclerViewAdapter(List<ContentRecyclerViewItem> mItemList) {
+        setItemList(mItemList);
+    }
+
+    public void setItemList(List<ContentRecyclerViewItem> mItemList) {
         this.mItemList = mItemList;
+        notifyDataSetChanged();
     }
 
     // onCreateViewHolder : 아이템 뷰를 위한 뷰홀더 객체를 생성하여 리턴

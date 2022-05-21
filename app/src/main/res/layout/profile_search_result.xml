@@ -16,8 +16,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageButton
-            android:id="@+id/profileImageButton"
+        <ImageView
+            android:id="@+id/profileImage"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="center_horizontal"
