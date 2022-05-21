@@ -14,7 +14,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecyclerViewAdapter.ViewHolder> {
@@ -46,7 +45,10 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
         holder.user_img.setImageURI(item.getUser_img());
         holder.user_name.setText(item.getUser_name());
         holder.user_text.setText(item.getUser_text());
-        if(item.getImage_list() == null) {
+
+        List<Uri> imageList = item.getImage_list();
+
+        if (imageList.size() == 0) {
             holder.img_layout1.setVisibility(View.GONE);
         }
         else if(item.getImage_list().size() == 1) {
@@ -67,6 +69,8 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
         holder.user_text.setOnClickListener(view -> openContentDetail(view, position));
         holder.img3.setOnClickListener(view -> openContentDetail(view, position));
         holder.comment_button.setOnClickListener(view -> openContentDetail(view, position));
+        holder.like_button.setText(holder.itemView.getResources().getString(R.string.content_likes, item.getLikes()));
+        holder.like_button.setOnClickListener(view -> changeLikes(view, position));
     }
 
     void openContentDetail(View view, int position)
@@ -78,6 +82,11 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
         intent.putExtra("userName", data.getUser_name());
         intent.putExtra("userText", data.getUser_text());
         context.startActivity(intent);
+    }
+
+    void changeLikes(View view, int position)
+    {
+        //#todo : 유저의 좋아요 상황에 따라 다르게...
     }
 
     // getItemCount : 전체 데이터의 개수를 리턴
@@ -97,6 +106,7 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
        ImageView img2;
        ImageView img3;
        Button comment_button;
+       Button like_button;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -111,6 +121,7 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
             img2 = itemView.findViewById(R.id.img2);
             img3 = itemView.findViewById(R.id.img3);
             comment_button = itemView.findViewById(R.id.comment_button);
+            like_button = itemView.findViewById(R.id.like_button);
         }
     }
 }
