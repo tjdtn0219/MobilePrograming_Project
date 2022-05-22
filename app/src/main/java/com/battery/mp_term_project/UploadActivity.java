@@ -1,6 +1,5 @@
 package com.battery.mp_term_project;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Intent;
@@ -16,11 +15,11 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,8 +27,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -79,8 +83,6 @@ public class UploadActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 Content content = new Content();
-//                content.setWriter_id(((GlobalVar) getApplication()).getUid());
-//                content.setWriter_id(((GlobalVar) getApplication()).getCurrent_user().getUid());
                 content.setUser(((GlobalVar) getApplication()).getCurrent_user());
                 content.setText(mUploadText.getText().toString());
                 content.setImages(uriList);
@@ -93,6 +95,8 @@ public class UploadActivity extends AppCompatActivity{
 
                 myRef.child("Contents").child(((GlobalVar) getApplication()).getCurrent_user().getUid() + "_"+Long.toString(now))
                         .setValue(content);//Push to RDB
+
+                UploadToFirebaseStorage(now);
 
                 Intent intent = new Intent(view.getContext(), MainActivity.class);
                 intent.putExtra("FromUpload", "게시글을 성공적으로 업로드 하였습니다.");
@@ -128,7 +132,7 @@ public class UploadActivity extends AppCompatActivity{
                 if(clipData.getItemCount() > 10){   // 선택한 이미지가 11장 이상인 경우
                     Toast.makeText(getApplicationContext(), "사진은 10장까지 선택 가능합니다.", Toast.LENGTH_LONG).show();
                 }
-                else{   // 선택한 이미지가 1장 이상 10장 이하인 경우
+                else {   // 선택한 이미지가 1장 이상 10장 이하인 경우
                     Log.e(TAG, "multiple choice");
 
                     for (int i = 0; i < clipData.getItemCount(); i++){
@@ -149,7 +153,31 @@ public class UploadActivity extends AppCompatActivity{
         }
     }
 
+    private void UploadToFirebaseStorage(long now) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        // Create a storage reference from our app
+        StorageReference storageRef = storage.getReference();
 
+        String uid = ((GlobalVar) getApplication()).getCurrent_user().getUid();
+        String fileName;
+        String filePath = "Content_images/" + uid + "/" + Long.toString(now) + "/";
+        for (int i = 0; i < uriList.size(); i++) {
+            fileName = Integer.toString(i) + ".jpg";
+            StorageReference uploadRef = storageRef.child(filePath + fileName);
+            UploadTask uploadTask = uploadRef.putFile(Uri.parse(uriList.get(i)));
 
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Log.e("Image Upload FireStorage", "SUCCESS");
+                }
+            });
+        }
+    }
 }
 

@@ -13,6 +13,7 @@
         android:backgroundTint="#F5BCBCBC"
         android:contentDescription="@string/main_add_category_button_contentDescription"
         android:scaleType="centerInside"
+        app:layout_constraintEnd_toStartOf="@+id/categoryRecyclerView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/plus_icon"
@@ -30,6 +31,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
+        android:id="@+id/frameLayout"
         android:layout_width="407dp"
         android:layout_height="552dp"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -3,6 +3,7 @@ package com.battery.mp_term_project;
 import android.content.Context;
 import android.net.Uri;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,15 +11,28 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.google.android.gms.auth.api.signin.internal.Storage;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.ListResult;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecyclerViewAdapter.ViewHolder> {
     private List<ContentRecyclerViewItem> mItemList = null;
+    private List<Uri> image_list = null;
+    private Context context;
 
     public ContentRecyclerViewAdapter() {
         mItemList = new ArrayList<>();
@@ -33,11 +47,12 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
         notifyDataSetChanged();
     }
 
+
     // onCreateViewHolder : 아이템 뷰를 위한 뷰홀더 객체를 생성하여 리턴
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
+        context = parent.getContext();
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View view = inflater.inflate(R.layout.content, parent, false);
@@ -49,6 +64,7 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
     // onBindViewHolder : position에 해당하는 데이터를 뷰홀더의 아이템뷰에 표시
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        View item = new View(context);
 //        ContentRecyclerViewItem item = mItemList.get(getItemCount()-1-position);
         ContentRecyclerViewItem item = mItemList.get(position);
 
@@ -56,24 +72,26 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
         holder.user_name.setText(item.getUser_name());
         holder.user_text.setText(item.getUser_text());
 
-        List<Uri> imageList = item.getImage_list();
+        holder.img_layout1.setVisibility(View.VISIBLE);
+        holder.img_layout2.setVisibility(View.VISIBLE);
+        holder.img3.setVisibility(View.VISIBLE);
 
-        if (imageList.size() == 0) {
+        if(item.getImage_list() == null) {
             holder.img_layout1.setVisibility(View.GONE);
         }
         else if(item.getImage_list().size() == 1) {
-            holder.img1.setImageURI(item.getImage_list().get(0));
             holder.img_layout2.setVisibility(View.GONE);
+            getURIFromStorage(holder, item, 0);
         }
         else if(item.getImage_list().size() == 2) {
-            holder.img1.setImageURI(item.getImage_list().get(0));
-            holder.img2.setImageURI(item.getImage_list().get(1));
-            holder.img_layout2.setVisibility(View.GONE);
+            getURIFromStorage(holder, item, 0);
+            getURIFromStorage(holder, item, 1);
+            holder.img3.setVisibility(View.GONE);
         }
         else {
-            holder.img1.setImageURI(item.getImage_list().get(0));
-            holder.img2.setImageURI(item.getImage_list().get(1));
-            holder.img3.setImageURI(item.getImage_list().get(2));
+            getURIFromStorage(holder, item, 0);
+            getURIFromStorage(holder, item, 1);
+            getURIFromStorage(holder, item, 2);
         }
 
         holder.user_text.setOnClickListener(view -> openContentDetail(view, position));
@@ -81,6 +99,29 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
         holder.comment_button.setOnClickListener(view -> openContentDetail(view, position));
         holder.like_button.setText(holder.itemView.getResources().getString(R.string.content_likes, item.getLikes()));
         holder.like_button.setOnClickListener(view -> changeLikes(view, position));
+    }
+
+    private void getURIFromStorage(@NonNull ViewHolder holder, ContentRecyclerViewItem item, int i) {
+        String get_path = "Content_images/" + item.getUser_id() + "/"
+                + item.getTime() + "/" + Integer.toString(i) + ".jpg";
+        StorageReference pathRef = FirebaseStorage.getInstance().getReference().child(get_path);
+        pathRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                if (i == 0) {
+                    Glide.with(context).load(uri).into(holder.img1);
+                }
+                else if (i == 1) {
+                    Glide.with(context).load(uri).into(holder.img2);
+                }
+                else if (i == 2) {
+                    Glide.with(context).load(uri).into(holder.img3);
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) { }
+        });
     }
 
     void openContentDetail(View view, int position)
