@@ -3,6 +3,7 @@ package com.battery.mp_term_project;
 import android.net.Uri;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ContentRecyclerViewItem {
@@ -10,17 +11,20 @@ public class ContentRecyclerViewItem {
     private String user_name;
     private String user_text;
     private List<Uri> image_list;
+    private int likes;
 
-    public ContentRecyclerViewItem(Uri user_img, String user_name, String user_text, List<String> image_list) {
+    public ContentRecyclerViewItem(Uri user_img, String user_name, String user_text, List<String> image_list, int likes) {
         this.user_img = user_img;
         this.user_name = user_name;
         this.user_text = user_text;
-        if(image_list != null) {
+        this.image_list = new ArrayList<>();
+        if (image_list != null) {
             for(String uri : image_list) {
                 this.image_list.add(Uri.parse(uri));
             }
         }
-        else image_list = null;
+
+        this.likes = likes;
     }
 
     public Uri getUser_img() {
@@ -54,4 +58,8 @@ public class ContentRecyclerViewItem {
     public void setImage_list(List<Uri> image_list) {
         this.image_list = image_list;
     }
+
+    public int getLikes() { return likes; }
+
+    public void setLikes(int likes) { this.likes = likes; }
 }

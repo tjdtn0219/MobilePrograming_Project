@@ -142,7 +142,7 @@ public class ProfileActivity extends AppCompatActivity {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Content content = snapshot.getValue(Content.class);
                     itemList.add(new ContentRecyclerViewItem(null,
-                            content.getUser().getName(), content.getText(), content.getImages()));
+                            content.getUser().getName(), content.getText(), content.getImages(), content.getLikes()));
                 }
                 RecyclerView mainRecyclerView = findViewById(R.id.profile_recycler_view);
 

@@ -24,4 +24,6 @@
     <string name="contentDetail_content_likeTextPlaceHolder">좋아요 10개</string>
     <string name="contentDetail_comment_userNamePlaceHolder">댓글 작성자</string>
     <string name="contentDetail_comment_contentTextPlaceHolder">작성댓글</string>
+    <string name="content_comment">댓글</string>
+    <string name="content_likes">좋아요 %d개</string>
 </resources>
