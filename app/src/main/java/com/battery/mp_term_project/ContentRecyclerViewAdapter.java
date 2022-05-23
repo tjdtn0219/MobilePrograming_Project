@@ -73,7 +73,10 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
 
         holder.img_layout1.setVisibility(View.VISIBLE);
         holder.img_layout2.setVisibility(View.VISIBLE);
-        holder.img3.setVisibility(View.VISIBLE);
+
+        holder.img1.setVisibility(View.INVISIBLE);
+        holder.img2.setVisibility(View.INVISIBLE);
+        holder.img3.setVisibility(View.INVISIBLE);
 
         if(item.getImage_list() == null) {
             holder.img_layout1.setVisibility(View.GONE);
@@ -109,12 +112,15 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
             public void onSuccess(Uri uri) {
                 if (i == 0) {
                     Glide.with(context).load(uri).into(holder.img1);
+                    holder.img1.setVisibility(View.VISIBLE);
                 }
                 else if (i == 1) {
                     Glide.with(context).load(uri).into(holder.img2);
+                    holder.img2.setVisibility(View.VISIBLE);
                 }
                 else if (i == 2) {
                     Glide.with(context).load(uri).into(holder.img3);
+                    holder.img3.setVisibility(View.VISIBLE);
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
