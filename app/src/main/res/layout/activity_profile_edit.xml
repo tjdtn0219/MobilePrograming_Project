@@ -28,10 +28,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <EditText
         android:id="@+id/profile_name"
-        android:layout_width="112dp"
-        android:layout_height="27dp"
+        android:layout_width="110dp"
+        android:layout_height="36dp"
         android:layout_marginBottom="4dp"
         android:gravity="center"
         android:text="name"
@@ -44,48 +44,24 @@
         app:layout_constraintTop_toBottomOf="@+id/profile_pt" />
 
 
-    <TextView
+    <EditText
         android:id="@+id/profile_text"
         android:layout_width="390dp"
         android:layout_height="165dp"
-        android:layout_marginBottom="4dp"
+        android:gravity="top|left"
         android:text="text"
         android:textSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/profile_recycler_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profile_name" />
-
-    <Button
-        android:id="@+id/btn_chat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="채팅하기"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/profile_recycler_view"
-        android:layout_width="390dp"
-        android:layout_height="333dp"
-        android:layout_marginTop="1dp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_chat"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.47"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_text">
-
-    </androidx.recyclerview.widget.RecyclerView>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_Edit"
         android:layout_width="72dp"
         android:layout_height="30dp"
         android:layout_marginTop="40dp"
-        android:text="수정"
+        android:text="완료"
         android:textSize="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"

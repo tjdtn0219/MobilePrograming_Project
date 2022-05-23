@@ -65,8 +65,6 @@ public class MainActivity extends AppCompatActivity {
         categoryAdapter = new CategoryAdapter(this);
         categoryRecyclerView.setAdapter(categoryAdapter);
 
-//        db = AppDatabase.getInstance(this);
-
         //컨첸츠 리사이클러뷰 추가
         mainbindList();
 
@@ -131,15 +129,15 @@ public class MainActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         myRef = FirebaseDatabase.getInstance().getReference();
         Query myTopPostsQuery = myRef.child("Contents");
-
+        //citiesRef.orderBy("name").limit(3);
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Content content = snapshot.getValue(Content.class);
-                    itemList.add(new ContentRecyclerViewItem(null,
-                            content.getUser().getName(), content.getText(), content.getImages(), content.getLikes()));
+                    itemList.add(new ContentRecyclerViewItem(null, content.getUser().getUid(),
+                            content.getUser().getName(), content.getText(), content.getTime(), content.getLikes(), content.getImages()));
                 }
                 RecyclerView mainRecyclerView = findViewById(R.id.main_recycler_view);
 

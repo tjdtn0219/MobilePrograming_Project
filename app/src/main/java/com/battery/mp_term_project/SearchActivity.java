@@ -82,7 +82,8 @@ public class SearchActivity extends AppCompatActivity {
                     if (user.getName().toLowerCase(Locale.ROOT).contains(key.toLowerCase(Locale.ROOT))
                     || content.getText().toLowerCase(Locale.ROOT).contains(key.toLowerCase(Locale.ROOT)))
                     {
-                        contentItemList.add(new ContentRecyclerViewItem(null, user.getName(), content.getText(), content.getImages(), content.getLikes()));
+                        contentItemList.add(new ContentRecyclerViewItem(null, content.getUser().getUid(),
+                                content.getUser().getName(), content.getText(), content.getTime(), content.getLikes(), content.getImages()));
                     }
                 }
                 searchResultRecyclerView.setAdapter(contentSearchAdapter);

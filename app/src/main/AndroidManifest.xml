@@ -29,6 +29,7 @@
             android:launchMode="singleTask"/>
         <activity android:name=".ChattingActivity" />
         <activity android:name=".ProfileActivity" />
+        <activity android:name=".ProfileEditActivity" />
         <activity android:name=".SearchActivity" />
         <activity android:name=".UploadActivity" />
         <activity android:name=".ContentDetailActivity" />

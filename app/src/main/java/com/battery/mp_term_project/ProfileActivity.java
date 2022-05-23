@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -41,9 +42,8 @@ public class ProfileActivity extends AppCompatActivity {
     ImageView profile_pt;
     TextView profile_name;
     TextView profile_text;
-    EditText profile_name_edit;
-    EditText profile_text_edit;
     Button btn_chat;
+    Button btn_Edit;
 
     private List<ContentRecyclerViewItem> itemList;
     private ContentRecyclerViewAdapter contentRecyclerViewAdapter;
@@ -77,27 +77,27 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
         profile_name = (TextView) findViewById(R.id.profile_name);
-        profile_name.setText(((GlobalVar) getApplication()).getCurrent_user().getName());
-        profile_name.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                profile_name.setVisibility(View.INVISIBLE);
-                profile_name_edit = (EditText) findViewById(R.id.profile_name_edit);
-                profile_name_edit.setVisibility(View.VISIBLE);
-                profile_name_edit.setText(((GlobalVar) getApplication()).getCurrent_user().getName());
-            }
-        });
-
         profile_text = (TextView) findViewById(R.id.profile_text);
-        profile_text.setText(((GlobalVar) getApplication()).getCurrent_user().getProfileText());
-        profile_text.setOnClickListener(new View.OnClickListener() {
+
+        Intent getIntent = getIntent();
+        if(!TextUtils.isEmpty(getIntent.getStringExtra("name"))) { //ProfileEditActivity서 넘어왔다면
+            Log.e("TAG-Intent", getIntent.getStringExtra("name"));
+            profile_name.setText(getIntent.getStringExtra("name"));
+            profile_text.setText(getIntent.getStringExtra("text"));
+//            profile_text.setText(getIntent.getStringExtra("text")); 이미지 set 하기
+        }
+        else {
+            profile_name.setText(((GlobalVar) getApplication()).getCurrent_user().getName());
+            profile_text.setText(((GlobalVar) getApplication()).getCurrent_user().getProfileText());
+        }
+
+        //프로필 이름, 글 수정하는 버튼
+        btn_Edit = (Button) findViewById(R.id.btn_Edit);
+        btn_Edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                profile_text.setVisibility(View.INVISIBLE);
-                profile_text_edit = (EditText) findViewById(R.id.profile_text_edit);
-                profile_text_edit.setVisibility(View.VISIBLE);
-                profile_text_edit.setText(((GlobalVar) getApplication()).getCurrent_user().getProfileText());
-
+                Intent intent = new Intent(getApplicationContext(), ProfileEditActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -141,8 +141,8 @@ public class ProfileActivity extends AppCompatActivity {
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Content content = snapshot.getValue(Content.class);
-                    itemList.add(new ContentRecyclerViewItem(null,
-                            content.getUser().getName(), content.getText(), content.getImages(), content.getLikes()));
+                    itemList.add(new ContentRecyclerViewItem(null, content.getUser().getUid(),
+                            content.getUser().getName(), content.getText(),content.getTime(), content.getLikes(), content.getImages()));
                 }
                 RecyclerView mainRecyclerView = findViewById(R.id.profile_recycler_view);
 
