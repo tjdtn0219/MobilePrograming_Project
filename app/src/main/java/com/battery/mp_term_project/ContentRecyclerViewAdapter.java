@@ -64,7 +64,6 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
     // onBindViewHolder : position에 해당하는 데이터를 뷰홀더의 아이템뷰에 표시
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        View item = new View(context);
 //        ContentRecyclerViewItem item = mItemList.get(getItemCount()-1-position);
         ContentRecyclerViewItem item = mItemList.get(position);
 
