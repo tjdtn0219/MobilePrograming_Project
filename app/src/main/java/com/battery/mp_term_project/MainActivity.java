@@ -32,6 +32,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -111,6 +113,14 @@ public class MainActivity extends AppCompatActivity {
         EditText categoryName = dialogView.findViewById(R.id.categoryName);
         Button confirmButton = dialogView.findViewById(R.id.confirmButton);
         confirmButton.setOnClickListener(view -> {
+            Log.e("TAG", categoryName.getText().toString());
+            ((GlobalVar) getApplication()).getCurrent_user().addCategory(categoryName.getText().toString());
+            DatabaseReference categoryRef = FirebaseDatabase.getInstance().getReference();
+            categoryRef.child("Users")
+                    .child(((GlobalVar) getApplication()).getCurrent_user().getUid())
+                    .child("categories")
+                    .setValue(((GlobalVar) getApplication()).getCurrent_user().getCategories());
+
             categoryAdapter.addCategory(categoryName.getText().toString());
             alertDialog.dismiss();
         });
