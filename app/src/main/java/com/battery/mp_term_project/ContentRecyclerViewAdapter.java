@@ -96,6 +96,8 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
             getURIFromStorage(holder, item, 2);
         }
 
+        holder.user_img.setOnClickListener(view -> openProfile(view, position));
+
         holder.user_text.setOnClickListener(view -> openContentDetail(view, position));
         holder.img3.setOnClickListener(view -> openContentDetail(view, position));
         holder.comment_button.setOnClickListener(view -> openContentDetail(view, position));
@@ -129,6 +131,13 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
         });
     }
 
+    void openProfile(View view, int position){
+        Context context = view.getContext();
+        Intent intent = new Intent(context, ProfileActivity.class);
+        context.startActivity(intent);
+
+    }
+
     void openContentDetail(View view, int position)
     {
         Context context = view.getContext();
@@ -153,16 +162,16 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
 
     // 아이템 뷰를 저장하는 뷰홀더 클래스
     public class ViewHolder extends RecyclerView.ViewHolder {
-       ImageView user_img;
-       TextView user_name;
-       TextView user_text;
-       LinearLayout img_layout1;
-       LinearLayout img_layout2;
-       ImageView img1;
-       ImageView img2;
-       ImageView img3;
-       Button comment_button;
-       Button like_button;
+        ImageView user_img;
+        TextView user_name;
+        TextView user_text;
+        LinearLayout img_layout1;
+        LinearLayout img_layout2;
+        ImageView img1;
+        ImageView img2;
+        ImageView img3;
+        Button comment_button;
+        Button like_button;
 
         public ViewHolder(View itemView) {
             super(itemView);
