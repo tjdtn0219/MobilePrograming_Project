@@ -1,23 +1,17 @@
 package com.battery.mp_term_project;
 
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
-@Entity
 public class Comment {
-    @PrimaryKey(autoGenerate = true)
-    private int id;
-
+    private User user;
     private String text;
+    private long time;
+    private String content_id;
 
-    private int content_id;
-
-    public int getId() {
-        return id;
+    public User getUser() {
+        return user;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getText() {
@@ -28,11 +22,19 @@ public class Comment {
         this.text = text;
     }
 
-    public int getContent_id() {
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
+
+    public String getContent_id() {
         return content_id;
     }
 
-    public void setContent_id(int content_id) {
+    public void setContent_id(String content_id) {
         this.content_id = content_id;
     }
 }
