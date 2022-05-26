@@ -25,6 +25,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,6 +34,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
         RecyclerView categoryRecyclerView = findViewById(R.id.categoryRecyclerView);
         categoryAdapter = new CategoryAdapter(this);
+        getCategoriesFromFireBase(categoryAdapter);
         categoryRecyclerView.setAdapter(categoryAdapter);
 
         //컨첸츠 리사이클러뷰 추가
@@ -111,6 +116,14 @@ public class MainActivity extends AppCompatActivity {
         EditText categoryName = dialogView.findViewById(R.id.categoryName);
         Button confirmButton = dialogView.findViewById(R.id.confirmButton);
         confirmButton.setOnClickListener(view -> {
+            Log.e("TAG", categoryName.getText().toString());
+            ((GlobalVar) getApplication()).getCurrent_user().addCategory(categoryName.getText().toString());
+            DatabaseReference categoryRef = FirebaseDatabase.getInstance().getReference();
+            categoryRef.child("Users")
+                    .child(((GlobalVar) getApplication()).getCurrent_user().getUid())
+                    .child("categories")
+                    .setValue(((GlobalVar) getApplication()).getCurrent_user().getCategories());
+
             categoryAdapter.addCategory(categoryName.getText().toString());
             alertDialog.dismiss();
         });
@@ -153,8 +166,28 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         myTopPostsQuery.addValueEventListener(postListener);
+    }
+
+    private void getCategoriesFromFireBase(CategoryAdapter categoryAdapter) {
+        Intent getFromLogIn = getIntent();
+        String uid = getFromLogIn.getStringExtra("userID");
+        DatabaseReference categoryRef = FirebaseDatabase.getInstance().getReference();
+        categoryRef.child("Users").child(uid)
+                .child("categories").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                    if(!task.isSuccessful()) {
+                        Log.e("firebase", "Error getting categories", task.getException());
+                    } else {
+                        for (DataSnapshot dataSnapshot : task.getResult().getChildren()) {
+                            categoryAdapter.addCategory(dataSnapshot.getValue(String.class));
+                        }
+                    }
+            }
+        });
 
     }
+
     @Override
     protected  void onNewIntent(Intent intent) {
         super.onNewIntent(intent);

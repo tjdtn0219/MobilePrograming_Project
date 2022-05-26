@@ -1,5 +1,6 @@
 package com.battery.mp_term_project;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class User {
@@ -8,6 +9,7 @@ public class User {
     private List<Integer> contents;
     private String profileText;
     private String profileImage;
+    private List<String> categories = new ArrayList<String>();
 
     public User() {
 
@@ -59,5 +61,13 @@ public class User {
 
     public void setProfileImage(String profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public List<String> getCategories() {
+        return categories;
+    }
+
+    public void addCategory(String category) {
+        this.categories.add(category);
     }
 }
