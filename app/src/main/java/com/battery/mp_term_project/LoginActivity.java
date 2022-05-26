@@ -96,6 +96,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
@@ -108,6 +109,7 @@ public class LoginActivity extends AppCompatActivity {
                             ValueEventListener postListener = new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
+
                                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                         userdata = snapshot.getValue(User.class);
                                     }
@@ -128,6 +130,7 @@ public class LoginActivity extends AppCompatActivity {
                             myFindUserByIdQuery.addListenerForSingleValueEvent(postListener);
 
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            intent.putExtra("userID", user.getUid());
                             startActivity(intent);
                         } else {
                             // If sign in fails, display a message to the user.
