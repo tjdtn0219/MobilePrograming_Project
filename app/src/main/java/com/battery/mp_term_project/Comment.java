@@ -6,35 +6,29 @@ public class Comment {
     private long time;
     private String content_id;
 
-    public User getUser() {
-        return user;
+    public Comment() {}
+
+    public Comment(User user, String text, long time, String content_id)
+    {
+        this.user = user;
+        this.text = text;
+        this.time = time;
+        this.content_id = content_id;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public User getUser() {
+        return user;
     }
 
     public String getText() {
         return text;
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
-
     public long getTime() {
         return time;
     }
 
-    public void setTime(long time) {
-        this.time = time;
-    }
-
     public String getContent_id() {
         return content_id;
-    }
-
-    public void setContent_id(String content_id) {
-        this.content_id = content_id;
     }
 }
