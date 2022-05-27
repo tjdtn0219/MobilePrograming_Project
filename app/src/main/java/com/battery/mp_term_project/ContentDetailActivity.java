@@ -24,13 +24,9 @@ public class ContentDetailActivity extends AppCompatActivity {
     private void loadContentData()
     {
         Intent intent = getIntent();
-        String userName = intent.getStringExtra("userName");
-        String userText = intent.getStringExtra("userText");
-        contentDetailAdapter.addData(new ContentDetailAdapter.ContentDetailData(userName, userText));
+        if (intent != null) {
+            String key = intent.getStringExtra("ContentKey");
 
-        for (int i = 0; i < 50; i++)
-        {
-            contentDetailAdapter.addData(new ContentDetailAdapter.ContentDetailData("Test" + i, "테스트 댓글입니다!"));
         }
     }
 }

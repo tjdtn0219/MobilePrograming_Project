@@ -3,18 +3,17 @@ package com.battery.mp_term_project;
 import java.util.List;
 
 public class Content {
-    private int cid;
+    private String key;
     private User user;
     private String text;
     private List<String> images;
     private long time;
-//    private String writer_id;
     private int likes;
 
     public Content(){
     }
 
-    public Content(String text, List<String> images, long time, User user) {
+    public Content(String key, String text, List<String> images, long time, User user) {
         this.user = user;
         this.text = text;
         this.images = images;
@@ -22,20 +21,16 @@ public class Content {
         this.likes = 0;
     }
 
+    public String getKey() { return key; }
+
+    public void setKey(String key) { this.key = key; }
+
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public int getCid() {
-        return cid;
-    }
-
-    public void setCid(int cid) {
-        this.cid = cid;
     }
 
     public String getText() {

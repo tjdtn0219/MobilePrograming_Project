@@ -88,7 +88,6 @@ public class UploadActivity extends AppCompatActivity{
                 content.setImages(uriList);
                 long now = System.currentTimeMillis();
                 content.setTime(now);
-                content.setCid(1);
 
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference myRef = database.getReference();

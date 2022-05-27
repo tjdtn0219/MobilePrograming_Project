@@ -149,8 +149,10 @@ public class MainActivity extends AppCompatActivity {
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Content content = snapshot.getValue(Content.class);
-                    itemList.add(new ContentRecyclerViewItem(null, content.getUser().getUid(),
-                            content.getUser().getName(), content.getText(), content.getTime(), content.getLikes(), content.getImages()));
+                    if(content != null) {
+                        content.setKey(snapshot.getKey());
+                        itemList.add(new ContentRecyclerViewItem(content));
+                    }
                 }
                 RecyclerView mainRecyclerView = findViewById(R.id.main_recycler_view);
 
