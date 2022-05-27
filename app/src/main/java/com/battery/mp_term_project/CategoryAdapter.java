@@ -16,16 +16,26 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
 
     private final LayoutInflater inflater;
     private final ArrayList<String> categoryStrings = new ArrayList<String>();
+    private GlobalVar globalVar;
 
     CategoryAdapter(Context context)
     {
         inflater = LayoutInflater.from(context);
+        try {
+            Activity activity = (Activity) context;
+            globalVar = (GlobalVar) activity.getApplication();
+        } catch (ClassCastException e) {
+            globalVar = null;
+        }
     }
 
     public void addCategory()
@@ -41,14 +51,29 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
     public void editCategory(String newCategoryString, int position)
     {
+        globalVar.getCurrent_user().editCategory(position, newCategoryString);
+        updateCategoryDatabase();
+
         categoryStrings.set(position, newCategoryString);
         notifyItemChanged(position);
     }
 
     public void removeCategory(int position)
     {
+        globalVar.getCurrent_user().removeCategory(position);
+        updateCategoryDatabase();
+
         categoryStrings.remove(position);
         notifyItemRemoved(position);
+    }
+
+    private void updateCategoryDatabase()
+    {
+        DatabaseReference categoryRef = FirebaseDatabase.getInstance().getReference();
+        categoryRef.child("Users")
+                .child(globalVar.getCurrent_user().getUid())
+                .child("categories")
+                .setValue(globalVar.getCurrent_user().getCategories());
     }
 
     @NonNull
