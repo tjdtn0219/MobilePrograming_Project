@@ -116,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
         EditText categoryName = dialogView.findViewById(R.id.categoryName);
         Button confirmButton = dialogView.findViewById(R.id.confirmButton);
         confirmButton.setOnClickListener(view -> {
-            Log.e("TAG", categoryName.getText().toString());
             ((GlobalVar) getApplication()).getCurrent_user().addCategory(categoryName.getText().toString());
             DatabaseReference categoryRef = FirebaseDatabase.getInstance().getReference();
             categoryRef.child("Users")

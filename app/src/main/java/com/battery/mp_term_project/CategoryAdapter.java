@@ -2,6 +2,7 @@ package com.battery.mp_term_project;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -74,6 +75,12 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         {
             super(itemView);
             categoryButton = itemView.findViewById(R.id.categoryButton);
+            categoryButton.setOnClickListener((view) -> {
+                Context context = itemView.getContext();
+                Intent intent = new Intent(context, SearchActivity.class);
+                intent.putExtra("Keyword", categoryButton.getText());
+                context.startActivity(intent);
+            });
             itemView.setOnCreateContextMenuListener(this);
         }
 
