@@ -70,4 +70,18 @@ public class User {
     public void addCategory(String category) {
         this.categories.add(category);
     }
+
+    public void editCategory(int index, String newCategory)
+    {
+        if (index < categories.size()) {
+            categories.set(index, newCategory);
+        }
+    }
+
+    public void removeCategory(int index)
+    {
+        if(index < categories.size()) {
+            categories.remove(index);
+        }
+    }
 }
