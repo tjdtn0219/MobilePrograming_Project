@@ -87,41 +87,69 @@
         </LinearLayout>
     </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/linearLayout2"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:background="@drawable/edge"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/like_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/edge"
+            android:text="@string/content_likes"
+            android:textColor="#000000"
+            android:textSize="10sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/comment_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/like_button2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/edge"
+            android:backgroundTint="#D2F4F8"
+            android:drawableStart="@drawable/drawable_resize"
+            android:gravity="center|center_vertical"
+            android:paddingLeft="10dp"
+            android:text="@string/content_likes"
+            android:textColor="#000000"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/comment_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/comment_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/edge"
+            android:text="@string/content_comment"
+            android:textColor="#000000"
+            android:textSize="10sp"
+            android:textStyle="normal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.494"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_width="0dp"
-            android:layout_height="35dp"
-            android:background="@drawable/edge"
-            android:orientation="horizontal">
+            app:layout_constraintStart_toEndOf="@+id/like_button"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="TouchTargetSizeCheck" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/like_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="3dp"
-                android:layout_weight="1"
-                android:background="@drawable/edge"
-                android:text="@string/content_likes"
-                android:textColor="#000000"
-                android:textSize="10sp"
-                android:textStyle="bold"
-                tools:ignore="TouchTargetSizeCheck" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/comment_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="3dp"
-                android:layout_weight="1"
-                android:background="@drawable/edge"
-                android:text="@string/content_comment"
-                android:textColor="#000000"
-                android:textSize="10sp"
-                android:textStyle="bold"
-                tools:ignore="TouchTargetSizeCheck" />
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

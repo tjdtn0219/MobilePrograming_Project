@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -34,6 +36,7 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
 
     public ContentRecyclerViewAdapter(List<ContentRecyclerViewItem> mItemList) {
         setItemList(mItemList);
+
     }
 
     public void setItemList(List<ContentRecyclerViewItem> mItemList) {
@@ -96,7 +99,7 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
         holder.img3.setOnClickListener(view -> openContentDetail(view, position));
         holder.comment_button.setOnClickListener(view -> openContentDetail(view, position));
         holder.like_button.setText(holder.itemView.getResources().getString(R.string.content_likes, item.getLikes()));
-        holder.like_button.setOnClickListener(view -> changeLikes(view, position));
+        holder.like_button.setOnClickListener(view -> changeLikes(holder, view, position));
     }
 
     private void getURIFromStorage(@NonNull ViewHolder holder, ContentRecyclerViewItem item, int i) {
@@ -141,9 +144,17 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
         context.startActivity(intent);
     }
 
-    void changeLikes(View view, int position)
+    void changeLikes(@NonNull ViewHolder viewHolder, View view, int position)
     {
         //#todo : 유저의 좋아요 상황에 따라 다르게...
+        viewHolder.like_button.setVisibility(View.INVISIBLE);
+        viewHolder.like_button2.setVisibility(View.VISIBLE);
+        ContentRecyclerViewItem data = mItemList.get(position);
+//        List<String> likes_list = data.l
+        DatabaseReference likesRef = FirebaseDatabase.getInstance().getReference();
+        likesRef.child("Contents").child(data.getKey()).child("likes").setValue(data.getLikes()+1);
+//        likesRef.child("Users").child()
+        viewHolder.like_button2.setText(viewHolder.itemView.getResources().getString(R.string.content_likes, data.getLikes()));
     }
 
     // getItemCount : 전체 데이터의 개수를 리턴
@@ -164,6 +175,7 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
         ImageView img3;
         Button comment_button;
         Button like_button;
+        Button like_button2;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -179,6 +191,7 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
             img3 = itemView.findViewById(R.id.img3);
             comment_button = itemView.findViewById(R.id.comment_button);
             like_button = itemView.findViewById(R.id.like_button);
+            like_button2 = itemView.findViewById(R.id.like_button2);
         }
     }
 }

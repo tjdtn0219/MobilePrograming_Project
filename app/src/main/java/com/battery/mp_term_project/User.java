@@ -10,6 +10,7 @@ public class User {
     private String profileText;
     private String profileImage;
     private List<String> categories = new ArrayList<String>();
+    private List<String> likes_contents = new ArrayList<>();
 
     public User() {
 
@@ -69,6 +70,14 @@ public class User {
 
     public void addCategory(String category) {
         this.categories.add(category);
+    }
+
+    public List<String> getLikes_contents() {
+        return likes_contents;
+    }
+
+    public void setLikes_contents(List<String> likes_contents) {
+        this.likes_contents = likes_contents;
     }
 
     public void editCategory(int index, String newCategory)
