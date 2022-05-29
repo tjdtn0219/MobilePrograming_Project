@@ -1,12 +1,13 @@
 package com.battery.mp_term_project;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Content {
     private String key;
     private User user;
     private String text;
-    private List<String> images;
+    private List<String> images = new ArrayList<>();
     private long time;
     private int likes;
 

@@ -1,17 +1,20 @@
 package com.battery.mp_term_project;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ScrollView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -22,16 +25,23 @@ public class ContentDetailAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public static class ContentDetailData
     {
+        String contentId;
         String userName;
         String content;
-        ArrayList<Uri> imageUris;
+        int imageCount;
         int likes;
 
-        ContentDetailData(String userName, String content, ArrayList<Uri> imageUris, int likes)
+        ContentDetailData(String contentId, String userName, String content)
         {
+            this.contentId = contentId;
             this.userName = userName;
             this.content = content;
-            this.imageUris = imageUris;
+        }
+
+        ContentDetailData(String contentId, String userName, String content, int imageCount, int likes)
+        {
+            this(contentId, userName, content);
+            this.imageCount = imageCount;
             this.likes = likes;
         }
     }
@@ -105,31 +115,80 @@ public class ContentDetailAdapter extends RecyclerView.Adapter<RecyclerView.View
         notifyItemInserted(dataArrayList.size() - 1);
     }
 
+    public void setData(int index, ContentDetailData data)
+    {
+        boolean haveToAppend = index >= dataArrayList.size();
+        while (index >= dataArrayList.size())
+        {
+            dataArrayList.add(null);
+        }
+
+        dataArrayList.set(index, data);
+        if(haveToAppend) {
+            notifyDataSetChanged();
+        }
+        else {
+            notifyItemChanged(index);
+        }
+    }
+
     class ContentViewHolder extends RecyclerView.ViewHolder
     {
         TextView userNameText;
         ImageButton userProfileImageButton;
-        ScrollView imageScrollView;
+        LinearLayout imageLinearLayout;
         TextView contentText;
+        TextView likeText;
 
         public ContentViewHolder(@NonNull View itemView) {
             super(itemView);
             userNameText = itemView.findViewById(R.id.contentUserNameText);
             userProfileImageButton = itemView.findViewById(R.id.userProfileImageButton);
-            imageScrollView = itemView.findViewById(R.id.imageScrollView);
+            imageLinearLayout = itemView.findViewById(R.id.imageLinearLayout);
             contentText = itemView.findViewById(R.id.contentText);
+            likeText = itemView.findViewById(R.id.likeText);
         }
 
         public void setData(ContentDetailData data)
         {
-            userNameText.setText(data.userName);
-            for (Uri imageUri : data.imageUris)
-            {
-                ImageView imageView = new ImageView(itemView.getContext());
-                imageView.setImageURI(imageUri);
-                imageScrollView.addView(imageView);
+            if (data == null) {
+                return;
             }
+
+            userNameText.setText(data.userName);
+            LoadImagesFromStorage(data);
             contentText.setText(data.content);
+            likeText.setText(itemView.getResources().getString(R.string.content_likes, data.likes));
+            likeText.setOnClickListener(view -> {
+                //#todo : 좋아요 추가/제거
+            });
+        }
+
+        private void LoadImagesFromStorage(ContentDetailData data) {
+            for(int i = 0; i < data.imageCount; i++) {
+                String[] ids = data.contentId.split("_");
+                String imagePath = "Content_images/" + ids[0] + "/"
+                        + ids[1] + "/" + i + ".jpg";
+
+                final int currentIndex = i;
+                StorageReference pathRef = FirebaseStorage.getInstance().getReference().child(imagePath);
+                pathRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    while (currentIndex >= imageLinearLayout.getChildCount())
+                    {
+                        imageLinearLayout.addView(new ImageView(itemView.getContext()));
+                    }
+
+                    ImageView imageView = (ImageView) imageLinearLayout.getChildAt(currentIndex);
+                    imageView.setMaxHeight(300);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    layoutParams.setMargins(10, 0, 10, 0);
+                    imageView.setLayoutParams(layoutParams);
+                    imageView.setAdjustViewBounds(true);
+
+                    Glide.with(itemView.getContext()).load(uri).into(imageView);
+                }).addOnFailureListener(e -> {
+                });
+            }
         }
     }
 
