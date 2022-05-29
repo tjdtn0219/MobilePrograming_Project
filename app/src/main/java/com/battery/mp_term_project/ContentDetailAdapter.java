@@ -25,12 +25,14 @@ public class ContentDetailAdapter extends RecyclerView.Adapter<RecyclerView.View
         String userName;
         String content;
         ArrayList<Uri> imageUris;
+        int likes;
 
-        ContentDetailData(String userName, String content)
+        ContentDetailData(String userName, String content, ArrayList<Uri> imageUris, int likes)
         {
             this.userName = userName;
             this.content = content;
-            imageUris = new ArrayList<>();
+            this.imageUris = imageUris;
+            this.likes = likes;
         }
     }
 

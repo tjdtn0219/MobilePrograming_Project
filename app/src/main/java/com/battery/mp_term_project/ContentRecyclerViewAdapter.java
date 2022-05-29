@@ -3,7 +3,6 @@ package com.battery.mp_term_project;
 import android.content.Context;
 import android.net.Uri;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,19 +10,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.auth.api.signin.internal.Storage;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
@@ -69,7 +63,7 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
 
         holder.user_img.setImageURI(item.getUser_img());
         holder.user_name.setText(item.getUser_name());
-        holder.user_text.setText(item.getUser_text());
+        holder.user_text.setText(item.getContent_text());
 
         holder.img_layout1.setVisibility(View.VISIBLE);
         holder.img_layout2.setVisibility(View.VISIBLE);
@@ -142,10 +136,8 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
     {
         Context context = view.getContext();
         Intent intent = new Intent(context, ContentDetailActivity.class);
-        //#todo : 추후에는 database에서 데이터를 받아오게 하는 것으로 충분할듯
         ContentRecyclerViewItem data = mItemList.get(position);
-        intent.putExtra("userName", data.getUser_name());
-        intent.putExtra("userText", data.getUser_text());
+        intent.putExtra("ContentKey", data.getKey());
         context.startActivity(intent);
     }
 
