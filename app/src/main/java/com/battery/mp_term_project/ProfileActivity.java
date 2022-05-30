@@ -148,7 +148,7 @@ public class ProfileActivity extends AppCompatActivity {
                 }
                 RecyclerView mainRecyclerView = findViewById(R.id.profile_recycler_view);
 
-                contentRecyclerViewAdapter = new ContentRecyclerViewAdapter(itemList);
+                contentRecyclerViewAdapter = new ContentRecyclerViewAdapter(itemList, ((GlobalVar) getApplication()).getCurrent_user());
                 mainRecyclerView.setAdapter(contentRecyclerViewAdapter);
 
                 mainRecyclerView.setLayoutManager(layoutManager);

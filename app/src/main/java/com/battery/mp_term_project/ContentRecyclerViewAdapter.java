@@ -3,6 +3,7 @@ package com.battery.mp_term_project;
 import android.content.Context;
 import android.net.Uri;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,14 +30,16 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
     private List<ContentRecyclerViewItem> mItemList = null;
     private List<Uri> image_list = null;
     private Context context;
+    private User Current_User;
 
     public ContentRecyclerViewAdapter() {
         mItemList = new ArrayList<>();
     }
 
-    public ContentRecyclerViewAdapter(List<ContentRecyclerViewItem> mItemList) {
+    public ContentRecyclerViewAdapter(List<ContentRecyclerViewItem> mItemList, User user) {
         setItemList(mItemList);
-
+        Current_User = user;
+//        Log.e("TAG" ,Current_User.getUid());
     }
 
     public void setItemList(List<ContentRecyclerViewItem> mItemList) {
@@ -93,13 +96,15 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
             getURIFromStorage(holder, item, 2);
         }
 
+        AdaptLikesButtonState(holder, item);//메인화면 초기 likes버튼 상태 알맞게 초기화
+
         holder.user_img.setOnClickListener(view -> openProfile(view, position));
 
         holder.user_text.setOnClickListener(view -> openContentDetail(view, position));
         holder.img3.setOnClickListener(view -> openContentDetail(view, position));
         holder.comment_button.setOnClickListener(view -> openContentDetail(view, position));
         holder.like_button.setText(holder.itemView.getResources().getString(R.string.content_likes, item.getLikes()));
-        holder.like_button.setOnClickListener(view -> changeLikes(holder, view, position));
+        holder.like_button.setOnClickListener(view -> changeLikes(holder, view, position, Current_User));
     }
 
     private void getURIFromStorage(@NonNull ViewHolder holder, ContentRecyclerViewItem item, int i) {
@@ -144,17 +149,29 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
         context.startActivity(intent);
     }
 
-    void changeLikes(@NonNull ViewHolder viewHolder, View view, int position)
+    void changeLikes(@NonNull ViewHolder viewHolder, View view, int position, User user)
     {
         //#todo : 유저의 좋아요 상황에 따라 다르게...
         viewHolder.like_button.setVisibility(View.INVISIBLE);
         viewHolder.like_button2.setVisibility(View.VISIBLE);
         ContentRecyclerViewItem data = mItemList.get(position);
-//        List<String> likes_list = data.l
+        List<String> likes_list = user.getLikes_list();
+        likes_list.add(data.getKey());
         DatabaseReference likesRef = FirebaseDatabase.getInstance().getReference();
-        likesRef.child("Contents").child(data.getKey()).child("likes").setValue(data.getLikes()+1);
-//        likesRef.child("Users").child()
-        viewHolder.like_button2.setText(viewHolder.itemView.getResources().getString(R.string.content_likes, data.getLikes()));
+        likesRef.child("Contents").child(data.getKey()).child("likes").setValue(data.getLikes() + 1);
+        likesRef.child("Users").child(user.getUid()).child("likes_list").setValue(likes_list);
+        viewHolder.like_button2.setText(viewHolder.itemView.getResources().getString(R.string.content_likes, data.getLikes() + 1));
+//        Log.e("TAGGG", Integer.toString(user.getLikes_list().size()));
+    }
+
+    void AdaptLikesButtonState(@NonNull ViewHolder holder, ContentRecyclerViewItem item) {
+        List<String> likes_list = Current_User.getLikes_list();
+        Boolean flag = likes_list.contains(item.getKey());
+        if(flag) {
+            holder.like_button.setVisibility(View.INVISIBLE);
+            holder.like_button2.setVisibility(View.VISIBLE);
+            holder.like_button2.setText(holder.itemView.getResources().getString(R.string.content_likes, item.getLikes()));
+        }
     }
 
     // getItemCount : 전체 데이터의 개수를 리턴
