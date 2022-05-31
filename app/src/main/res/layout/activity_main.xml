@@ -9,6 +9,7 @@
         android:id="@+id/addCategoryButton"
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:layout_margin="2dp"
         android:background="@drawable/roundstyle"
         android:backgroundTint="#F5BCBCBC"
         android:contentDescription="@string/main_add_category_button_contentDescription"
