@@ -3,8 +3,9 @@
     android:id="@+id/categoryButton"
     android:layout_width="120dp"
     android:layout_height="60dp"
-    android:backgroundTint="#8A98FF"
+    android:layout_margin="1dp"
+    android:backgroundTint="@color/blue3"
     android:text="@string/main_category_button_textPlaceholder"
-    android:textColor="@color/black">
+    android:textColor="@color/white">
 
 </Button>
