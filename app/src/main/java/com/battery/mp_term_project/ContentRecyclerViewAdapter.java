@@ -3,6 +3,7 @@ package com.battery.mp_term_project;
 import android.content.Context;
 import android.net.Uri;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -27,13 +30,16 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
     private List<ContentRecyclerViewItem> mItemList = null;
     private List<Uri> image_list = null;
     private Context context;
+    private User Current_User;
 
     public ContentRecyclerViewAdapter() {
         mItemList = new ArrayList<>();
     }
 
-    public ContentRecyclerViewAdapter(List<ContentRecyclerViewItem> mItemList) {
+    public ContentRecyclerViewAdapter(List<ContentRecyclerViewItem> mItemList, User user) {
         setItemList(mItemList);
+        Current_User = user;
+//        Log.e("TAG" ,Current_User.getUid());
     }
 
     public void setItemList(List<ContentRecyclerViewItem> mItemList) {
@@ -51,6 +57,7 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
 
         View view = inflater.inflate(R.layout.content, parent, false);
         ContentRecyclerViewAdapter.ViewHolder vh = new ContentRecyclerViewAdapter.ViewHolder(view);
+        Log.e("TAGG", "뷰홀더 생성");
 
         return vh;
     }
@@ -90,13 +97,16 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
             getURIFromStorage(holder, item, 2);
         }
 
+        AdaptLikesButtonState(holder, item);//메인화면 초기 likes버튼 상태 알맞게 초기화
+
         holder.user_img.setOnClickListener(view -> openProfile(view, position));
 
         holder.user_text.setOnClickListener(view -> openContentDetail(view, position));
         holder.img3.setOnClickListener(view -> openContentDetail(view, position));
         holder.comment_button.setOnClickListener(view -> openContentDetail(view, position));
         holder.like_button.setText(holder.itemView.getResources().getString(R.string.content_likes, item.getLikes()));
-        holder.like_button.setOnClickListener(view -> changeLikes(view, position));
+        holder.like_button.setOnClickListener(view -> changeLikes(holder, view, position, Current_User));
+        holder.like_button2.setOnClickListener(view -> changeLikes(holder, view, position, Current_User));
     }
 
     private void getURIFromStorage(@NonNull ViewHolder holder, ContentRecyclerViewItem item, int i) {
@@ -141,9 +151,48 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
         context.startActivity(intent);
     }
 
-    void changeLikes(View view, int position)
+    void changeLikes(@NonNull ViewHolder viewHolder, View view, int position, User user)
     {
         //#todo : 유저의 좋아요 상황에 따라 다르게...
+        ContentRecyclerViewItem data = mItemList.get(position);
+        List<String> likes_list = user.getLikes_list();
+        DatabaseReference likesRef = FirebaseDatabase.getInstance().getReference();
+
+        if (viewHolder.like_button.getVisibility() == View.VISIBLE) {
+            //유저가 좋아요를 안누른 상태라면
+            Log.e("TAGG", "좋아요 클릭");
+            viewHolder.like_button.setVisibility(View.INVISIBLE);
+            viewHolder.like_button2.setVisibility(View.VISIBLE);
+            likes_list.add(data.getKey());
+            likesRef.child("Contents").child(data.getKey()).child("likes").setValue(data.getLikes() + 1);
+            likesRef.child("Users").child(user.getUid()).child("likes_list").setValue(likes_list);
+            viewHolder.like_button2.setText(viewHolder.itemView.getResources().getString(R.string.content_likes, data.getLikes()+1));
+        }
+        else {
+            //유저가 좋아요를 이미 누른상태라면
+            Log.e("TAGG", "좋아요 해제");
+            viewHolder.like_button.setVisibility(View.VISIBLE);
+            viewHolder.like_button2.setVisibility(View.INVISIBLE);
+            likes_list.remove(data.getKey());
+            likesRef.child("Contents").child(data.getKey()).child("likes").setValue(data.getLikes() - 1);
+            likesRef.child("Users").child(user.getUid()).child("likes_list").setValue(likes_list);
+            viewHolder.like_button.setText(viewHolder.itemView.getResources().getString(R.string.content_likes, data.getLikes()));
+        }
+
+//        Log.e("TAGGG", Integer.toString(user.getLikes_list().size()));
+    }
+
+    void AdaptLikesButtonState(@NonNull ViewHolder holder, ContentRecyclerViewItem item) {
+        if(Current_User.getLikes_list().size() > 0) {
+            Log.e("TAGG", "좋아요 어댑터");
+            List<String> likes_list = Current_User.getLikes_list();
+            Boolean flag = likes_list.contains(item.getKey());
+            if(flag) {
+                holder.like_button.setVisibility(View.INVISIBLE);
+                holder.like_button2.setVisibility(View.VISIBLE);
+                holder.like_button2.setText(holder.itemView.getResources().getString(R.string.content_likes, item.getLikes()));
+            }
+        }
     }
 
     // getItemCount : 전체 데이터의 개수를 리턴
@@ -164,6 +213,7 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
         ImageView img3;
         Button comment_button;
         Button like_button;
+        Button like_button2;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -179,6 +229,7 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
             img3 = itemView.findViewById(R.id.img3);
             comment_button = itemView.findViewById(R.id.comment_button);
             like_button = itemView.findViewById(R.id.like_button);
+            like_button2 = itemView.findViewById(R.id.like_button2);
         }
     }
 }

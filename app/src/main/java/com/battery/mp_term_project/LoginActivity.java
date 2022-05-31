@@ -127,7 +127,8 @@ public class LoginActivity extends AppCompatActivity {
                                     // Getting Post failed, log a message
                                 }
                             };
-                            myFindUserByIdQuery.addListenerForSingleValueEvent(postListener);
+//                            myFindUserByIdQuery.addListenerForSingleValueEvent(postListener);
+                            myFindUserByIdQuery.addValueEventListener(postListener);
 
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             intent.putExtra("userID", user.getUid());
