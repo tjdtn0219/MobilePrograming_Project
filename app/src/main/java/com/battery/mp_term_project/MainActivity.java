@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         myRef = FirebaseDatabase.getInstance().getReference();
         Query myTopPostsQuery = myRef.child("Contents");
-//        Query myCurrentUserQuery = myRef.child("Users");
+        RecyclerView mainRecyclerView = findViewById(R.id.main_recycler_view);
         //citiesRef.orderBy("name").limit(3);
         ValueEventListener postListener_content = new ValueEventListener() {
             @Override
@@ -154,11 +154,11 @@ public class MainActivity extends AppCompatActivity {
                         itemList.add(new ContentRecyclerViewItem(content));
                     }
                 }
-                RecyclerView mainRecyclerView = findViewById(R.id.main_recycler_view);
 
                 contentRecyclerViewAdapter = new ContentRecyclerViewAdapter(itemList, ((GlobalVar) getApplication()).getCurrent_user());
+//                contentRecyclerViewAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
                 mainRecyclerView.setAdapter(contentRecyclerViewAdapter);
-
+                Log.e("TAGG", "mainbind-data");
                 mainRecyclerView.setLayoutManager(layoutManager);
             }
 
@@ -167,7 +167,8 @@ public class MainActivity extends AppCompatActivity {
                 // Getting Post failed, log a message
             }
         };
-        myTopPostsQuery.addValueEventListener(postListener_content);
+//        myTopPostsQuery.addValueEventListener(postListener_content);
+        myTopPostsQuery.addListenerForSingleValueEvent(postListener_content);
     }
 
     private void getCategoriesFromFireBase(CategoryAdapter categoryAdapter) {

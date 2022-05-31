@@ -57,6 +57,7 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
 
         View view = inflater.inflate(R.layout.content, parent, false);
         ContentRecyclerViewAdapter.ViewHolder vh = new ContentRecyclerViewAdapter.ViewHolder(view);
+        Log.e("TAGG", "뷰홀더 생성");
 
         return vh;
     }
@@ -105,6 +106,7 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
         holder.comment_button.setOnClickListener(view -> openContentDetail(view, position));
         holder.like_button.setText(holder.itemView.getResources().getString(R.string.content_likes, item.getLikes()));
         holder.like_button.setOnClickListener(view -> changeLikes(holder, view, position, Current_User));
+        holder.like_button2.setOnClickListener(view -> changeLikes(holder, view, position, Current_User));
     }
 
     private void getURIFromStorage(@NonNull ViewHolder holder, ContentRecyclerViewItem item, int i) {
@@ -152,25 +154,44 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
     void changeLikes(@NonNull ViewHolder viewHolder, View view, int position, User user)
     {
         //#todo : 유저의 좋아요 상황에 따라 다르게...
-        viewHolder.like_button.setVisibility(View.INVISIBLE);
-        viewHolder.like_button2.setVisibility(View.VISIBLE);
         ContentRecyclerViewItem data = mItemList.get(position);
         List<String> likes_list = user.getLikes_list();
-        likes_list.add(data.getKey());
         DatabaseReference likesRef = FirebaseDatabase.getInstance().getReference();
-        likesRef.child("Contents").child(data.getKey()).child("likes").setValue(data.getLikes() + 1);
-        likesRef.child("Users").child(user.getUid()).child("likes_list").setValue(likes_list);
-        viewHolder.like_button2.setText(viewHolder.itemView.getResources().getString(R.string.content_likes, data.getLikes() + 1));
+
+        if (viewHolder.like_button.getVisibility() == View.VISIBLE) {
+            //유저가 좋아요를 안누른 상태라면
+            Log.e("TAGG", "좋아요 클릭");
+            viewHolder.like_button.setVisibility(View.INVISIBLE);
+            viewHolder.like_button2.setVisibility(View.VISIBLE);
+            likes_list.add(data.getKey());
+            likesRef.child("Contents").child(data.getKey()).child("likes").setValue(data.getLikes() + 1);
+            likesRef.child("Users").child(user.getUid()).child("likes_list").setValue(likes_list);
+            viewHolder.like_button2.setText(viewHolder.itemView.getResources().getString(R.string.content_likes, data.getLikes()+1));
+        }
+        else {
+            //유저가 좋아요를 이미 누른상태라면
+            Log.e("TAGG", "좋아요 해제");
+            viewHolder.like_button.setVisibility(View.VISIBLE);
+            viewHolder.like_button2.setVisibility(View.INVISIBLE);
+            likes_list.remove(data.getKey());
+            likesRef.child("Contents").child(data.getKey()).child("likes").setValue(data.getLikes() - 1);
+            likesRef.child("Users").child(user.getUid()).child("likes_list").setValue(likes_list);
+            viewHolder.like_button.setText(viewHolder.itemView.getResources().getString(R.string.content_likes, data.getLikes()));
+        }
+
 //        Log.e("TAGGG", Integer.toString(user.getLikes_list().size()));
     }
 
     void AdaptLikesButtonState(@NonNull ViewHolder holder, ContentRecyclerViewItem item) {
-        List<String> likes_list = Current_User.getLikes_list();
-        Boolean flag = likes_list.contains(item.getKey());
-        if(flag) {
-            holder.like_button.setVisibility(View.INVISIBLE);
-            holder.like_button2.setVisibility(View.VISIBLE);
-            holder.like_button2.setText(holder.itemView.getResources().getString(R.string.content_likes, item.getLikes()));
+        if(Current_User.getLikes_list().size() > 0) {
+            Log.e("TAGG", "좋아요 어댑터");
+            List<String> likes_list = Current_User.getLikes_list();
+            Boolean flag = likes_list.contains(item.getKey());
+            if(flag) {
+                holder.like_button.setVisibility(View.INVISIBLE);
+                holder.like_button2.setVisibility(View.VISIBLE);
+                holder.like_button2.setText(holder.itemView.getResources().getString(R.string.content_likes, item.getLikes()));
+            }
         }
     }
 
