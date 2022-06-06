@@ -130,9 +130,10 @@ public class ProfileEditActivity extends AppCompatActivity {
         String uid = ((GlobalVar) getApplication()).getCurrent_user().getUid();
         String fileName = "Profile_images/" + uid + "/" + "profile.jpg";
         StorageReference uploadRef = storageRef.child(fileName);
-        UploadTask uploadTask = uploadRef.putFile(Uri.parse(pt_uri));
+        if (pt_uri != null) {
+            UploadTask uploadTask = uploadRef.putFile(Uri.parse(pt_uri));
 
-        uploadTask.addOnFailureListener(new OnFailureListener() {
+            uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
                     // Handle unsuccessful uploads
@@ -143,6 +144,9 @@ public class ProfileEditActivity extends AppCompatActivity {
                     Log.e("Image Upload FireStorage", "SUCCESS");
                 }
             });
+
+        }
+
         }
 
 
