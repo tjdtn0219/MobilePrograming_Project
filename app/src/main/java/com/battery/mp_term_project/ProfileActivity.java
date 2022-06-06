@@ -18,6 +18,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,12 +26,20 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,6 +59,13 @@ public class ProfileActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private DatabaseReference myRef;
 
+    String uid;
+    String user_pt;
+    String user_name;
+    String user_txt;
+
+    String id_test;
+
 
     //프로필 사진 요청코드
     private static final int REQUEST_CODE = 0;
@@ -62,34 +78,67 @@ public class ProfileActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
-        //컨첸츠 리사이클러뷰 추가
-        profilebindList();
+        Intent intent = getIntent();
+        uid = intent.getStringExtra("uid");
+        id_test = ((GlobalVar) getApplication()).getCurrent_user().getUid();
 
-        // 앨범으로 이동하는 버튼
         profile_pt = (ImageView) findViewById(R.id.profile_pt);
-        profile_pt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(intent, REQUEST_CODE);
-            }
-        });
         profile_name = (TextView) findViewById(R.id.profile_name);
         profile_text = (TextView) findViewById(R.id.profile_text);
 
-        Intent getIntent = getIntent();
-        if(!TextUtils.isEmpty(getIntent.getStringExtra("name"))) { //ProfileEditActivity서 넘어왔다면
-            Log.e("TAG-Intent", getIntent.getStringExtra("name"));
-            profile_name.setText(getIntent.getStringExtra("name"));
-            profile_text.setText(getIntent.getStringExtra("text"));
-//            profile_text.setText(getIntent.getStringExtra("text")); 이미지 set 하기
-        }
-        else {
-            profile_name.setText(((GlobalVar) getApplication()).getCurrent_user().getName());
-            profile_text.setText(((GlobalVar) getApplication()).getCurrent_user().getProfileText());
-        }
+
+        Log.d("profile", id_test);
+
+
+        //프로필 요소 추가
+         getURIFromStorage(uid);
+
+
+
+        myRef = FirebaseDatabase.getInstance().getReference();
+        myRef.child("Users").child(uid).child("name").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                user_name = dataSnapshot.getValue(String.class);
+
+                profile_name.setText(user_name);
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
+            }
+        });
+
+        myRef.child("Users").child(uid).child("profileText").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                user_txt = dataSnapshot.getValue(String.class);
+
+                profile_text.setText(user_txt);
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
+            }
+        });
+
+
+
+
+
+        //컨첸츠 리사이클러뷰 추가
+        profilebindList();
+
+
+
+
+
 
         //프로필 이름, 글 수정하는 버튼
         btn_Edit = (Button) findViewById(R.id.btn_Edit);
@@ -102,31 +151,24 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         btn_chat = findViewById(R.id.btn_chat);
-        btn_chat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(),ChattingActivity.class);
-                startActivity(intent);
-            }
-        });
+        if( id_test.equals(uid)){
+            btn_chat.setVisibility(View.GONE);
+        }else{
+            btn_chat = findViewById(R.id.btn_chat);
+            btn_chat.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getApplicationContext(),ChattingActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
+
+
         
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                try {
-                    Uri uri = data.getData();
-                    Glide.with(getApplicationContext()).load(uri).into(profile_pt); //다이얼로그 이미지사진에 넣기
-                } catch (Exception e) {
 
-                }
-            } else if (resultCode == RESULT_CANCELED) {// 취소시 호출할 행동 쓰기
-            }
-        }
-    }
 
     private void profilebindList(){
 
@@ -136,33 +178,56 @@ public class ProfileActivity extends AppCompatActivity {
         Query myTopPostsQuery = myRef.child("Contents");
 
         ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Content content = snapshot.getValue(Content.class);
-                    if(content != null) {
-                        content.setKey(snapshot.getKey());
-                        itemList.add(new ContentRecyclerViewItem(content));
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Content content = snapshot.getValue(Content.class);
+                        if(content != null && content.getUser().getUid().equals(uid)) {
+                            content.setKey(snapshot.getKey());
+                            Log.d("profile", "컨텐츠uid1 : " + content.getUser().getUid());
+                            Log.d("profile", "컨텐츠uid2 : " + uid);
+                            itemList.add(new ContentRecyclerViewItem(content));
+
+                        }
                     }
+                    RecyclerView mainRecyclerView = findViewById(R.id.profile_recycler_view);
+
+                    contentRecyclerViewAdapter = new ContentRecyclerViewAdapter(itemList, ((GlobalVar) getApplication()).getCurrent_user());
+                    mainRecyclerView.setAdapter(contentRecyclerViewAdapter);
+
+                    mainRecyclerView.setLayoutManager(layoutManager);
                 }
-                RecyclerView mainRecyclerView = findViewById(R.id.profile_recycler_view);
 
-                contentRecyclerViewAdapter = new ContentRecyclerViewAdapter(itemList, ((GlobalVar) getApplication()).getCurrent_user());
-                mainRecyclerView.setAdapter(contentRecyclerViewAdapter);
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // Getting Post failed, log a message
 
-                mainRecyclerView.setLayoutManager(layoutManager);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-            }
-        };
+                }
+            };
         myTopPostsQuery.addValueEventListener(postListener);
-
-
     }
+
+    private void getURIFromStorage(String uid) {
+        String get_path = "Profile_images/" + uid + "/" + "profile.jpg";
+        StorageReference pathRef = FirebaseStorage.getInstance().getReference().child(get_path);
+        pathRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                    //Glide.with(getApplicationContext()).load(uri).into(profile_pt);
+                Glide.with(getApplicationContext())
+                        .load(uri)
+                        .into(profile_pt);
+
+                }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("profile", "프로필uri 실패 ");
+            }
+        });
+    }
+
 
 
 }
