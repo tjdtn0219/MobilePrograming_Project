@@ -1,5 +1,6 @@
 package com.battery.mp_term_project;
 
+import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,7 +11,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,23 +21,28 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProfileEditActivity extends AppCompatActivity {
 
-    SearchView contentSearchView;
     ImageView profile_pt;
     TextView profile_name;
     TextView profile_text;
     Button btn_Edit;
+    String pt_uri;
 
     //프로필 사진 요청코드
     private static final int REQUEST_CODE = 0;
@@ -49,6 +57,8 @@ public class ProfileEditActivity extends AppCompatActivity {
 
         // 앨범으로 이동하는 버튼
         profile_pt = (ImageView) findViewById(R.id.profile_pt);
+        getURIFromStorage(((GlobalVar) getApplication()).getCurrent_user().getUid());
+
         profile_pt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,15 +79,14 @@ public class ProfileEditActivity extends AppCompatActivity {
         btn_Edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
-                intent.putExtra("name", profile_name.getText().toString());
-                intent.putExtra("text", profile_text.getText().toString());
-//                intent.putExtra("image", profile_text.getText().toString());
+
+                UploadToFirebaseStorage();
 
                 User userdata = ((GlobalVar) getApplication()).getCurrent_user();
                 userdata.setName(profile_name.getText().toString());
                 userdata.setProfileText(profile_text.getText().toString());
-//                userdata.setProfileImage();
+                userdata.setProfileImage(pt_uri);
+
                 ((GlobalVar) getApplication()).setCurrent_user(userdata);
 
                 DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
@@ -86,25 +95,82 @@ public class ProfileEditActivity extends AppCompatActivity {
                         .setValue(userdata);//Push to RDB
 
 
+
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(intent);
+                finish();
+                Toast.makeText(getApplicationContext(), "프로필 수정이 완료되었습니다.", Toast.LENGTH_LONG).show();
+
             }
         });
         
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                try {
-                    Uri uri = data.getData();
-                    Glide.with(getApplicationContext()).load(uri).into(profile_pt); //다이얼로그 이미지사진에 넣기
-                } catch (Exception e) {
-
-                }
-            } else if (resultCode == RESULT_CANCELED) {// 취소시 호출할 행동 쓰기
-            }
+        if(data == null){   // 어떤 이미지도 선택하지 않은 경우
+            Toast.makeText(getApplicationContext(), "이미지를 선택하지 않았습니다.", Toast.LENGTH_LONG).show();
         }
+        else{
+
+            Uri imageUri = data.getData();
+            Glide.with(getApplicationContext()).load(imageUri).into(profile_pt);
+            pt_uri = imageUri.toString();
+        }}
     }
+}
+    private void UploadToFirebaseStorage() {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        // Create a storage reference from our app
+        StorageReference storageRef = storage.getReference();
+
+        String uid = ((GlobalVar) getApplication()).getCurrent_user().getUid();
+        String fileName = "Profile_images/" + uid + "/" + "profile.jpg";
+        StorageReference uploadRef = storageRef.child(fileName);
+        if (pt_uri != null) {
+            UploadTask uploadTask = uploadRef.putFile(Uri.parse(pt_uri));
+
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Log.e("Image Upload FireStorage", "SUCCESS");
+                }
+            });
+
+        }
+
+        }
+
+
+
+
+
+    private void getURIFromStorage(String uid) {
+        String get_path = "Profile_images/" + uid + "/" + "profile.jpg";
+        StorageReference pathRef = FirebaseStorage.getInstance().getReference().child(get_path);
+        pathRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                //Glide.with(getApplicationContext()).load(uri).into(profile_pt);
+                Glide.with(getApplicationContext())
+                        .load(uri)
+                        .into(profile_pt);
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("profile", "프로필uri 실패 ");
+            }
+        });
+    }
+
 }

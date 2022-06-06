@@ -99,7 +99,8 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
 
         AdaptLikesButtonState(holder, item);//메인화면 초기 likes버튼 상태 알맞게 초기화
 
-        holder.user_img.setOnClickListener(view -> openProfile(view, position));
+
+        holder.user_img.setOnClickListener(view -> openProfile(view, position, item.getUser_id()));
 
         holder.user_text.setOnClickListener(view -> openContentDetail(view, position));
         holder.img3.setOnClickListener(view -> openContentDetail(view, position));
@@ -135,9 +136,10 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
         });
     }
 
-    void openProfile(View view, int position){
+    void openProfile(View view, int position, String uid){
         Context context = view.getContext();
         Intent intent = new Intent(context, ProfileActivity.class);
+        intent.putExtra("uid", uid);
         context.startActivity(intent);
 
     }

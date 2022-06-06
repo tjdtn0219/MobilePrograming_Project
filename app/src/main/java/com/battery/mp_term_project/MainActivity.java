@@ -36,6 +36,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
@@ -103,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         else if (itemId == R.id.item_profile)
         {
             Intent intent = new Intent(this, ProfileActivity.class);
+            intent.putExtra("uid", ((GlobalVar) getApplication()).getCurrent_user().getUid());
             startActivity(intent);
         }
 
@@ -146,33 +148,36 @@ public class MainActivity extends AppCompatActivity {
         Query myTopPostsQuery = myRef.child("Contents");
         RecyclerView mainRecyclerView = findViewById(R.id.main_recycler_view);
         //citiesRef.orderBy("name").limit(3);
-        ValueEventListener postListener_content = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                itemList = new ArrayList<>();
 
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Content content = snapshot.getValue(Content.class);
-                    if(content != null) {
-                        content.setKey(snapshot.getKey());
-                        itemList.add(new ContentRecyclerViewItem(content));
+            ValueEventListener postListener_content = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    itemList = new ArrayList<>();
+
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Content content = snapshot.getValue(Content.class);
+                        if(content != null) {
+                            content.setKey(snapshot.getKey());
+                            itemList.add(new ContentRecyclerViewItem(content));
+                        }
                     }
+
+                    contentRecyclerViewAdapter = new ContentRecyclerViewAdapter(itemList, ((GlobalVar) getApplication()).getCurrent_user());
+//                contentRecyclerViewAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
+                    mainRecyclerView.setAdapter(contentRecyclerViewAdapter);
+                    Log.e("TAGG", "mainbind-data");
+                    mainRecyclerView.setLayoutManager(layoutManager);
                 }
 
-                contentRecyclerViewAdapter = new ContentRecyclerViewAdapter(itemList, ((GlobalVar) getApplication()).getCurrent_user());
-//                contentRecyclerViewAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
-                mainRecyclerView.setAdapter(contentRecyclerViewAdapter);
-                Log.e("TAGG", "mainbind-data");
-                mainRecyclerView.setLayoutManager(layoutManager);
-            }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // Getting Post failed, log a message
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-            }
-        };
+                }
+            };
 //        myTopPostsQuery.addValueEventListener(postListener_content);
-        myTopPostsQuery.addListenerForSingleValueEvent(postListener_content);
+            myTopPostsQuery.addListenerForSingleValueEvent(postListener_content);
+
     }
 
     private void getCategoriesFromFireBase(CategoryAdapter categoryAdapter) {

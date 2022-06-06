@@ -1,9 +1,10 @@
 package com.battery.mp_term_project;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class User {
+public class User{
     private String uid;
     private String name;
     private List<Integer> contents;
