@@ -84,21 +84,22 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
         }
         else if(item.getImage_list().size() == 1) {
             holder.img_layout2.setVisibility(View.GONE);
-            getURIFromStorage(holder, item, 0);
+            getContentURIFromStorage(holder, item, 0);
         }
         else if(item.getImage_list().size() == 2) {
-            getURIFromStorage(holder, item, 0);
-            getURIFromStorage(holder, item, 1);
+            getContentURIFromStorage(holder, item, 0);
+            getContentURIFromStorage(holder, item, 1);
             holder.img3.setVisibility(View.GONE);
         }
         else {
-            getURIFromStorage(holder, item, 0);
-            getURIFromStorage(holder, item, 1);
-            getURIFromStorage(holder, item, 2);
+            getContentURIFromStorage(holder, item, 0);
+            getContentURIFromStorage(holder, item, 1);
+            getContentURIFromStorage(holder, item, 2);
         }
 
         AdaptLikesButtonState(holder, item);//메인화면 초기 likes버튼 상태 알맞게 초기화
 
+        getProfileURIFromStorage(holder, item);//메인화면 프로필 이미지 출력
 
         holder.user_img.setOnClickListener(view -> openProfile(view, position, item.getUser_id()));
 
@@ -110,10 +111,10 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
         holder.like_button2.setOnClickListener(view -> changeLikes(holder, view, position, Current_User));
     }
 
-    private void getURIFromStorage(@NonNull ViewHolder holder, ContentRecyclerViewItem item, int i) {
-        String get_path = "Content_images/" + item.getUser_id() + "/"
+    private void getContentURIFromStorage(@NonNull ViewHolder holder, ContentRecyclerViewItem item, int i) {
+        String get_content_img_path = "Content_images/" + item.getUser_id() + "/"
                 + item.getTime() + "/" + Integer.toString(i) + ".jpg";
-        StorageReference pathRef = FirebaseStorage.getInstance().getReference().child(get_path);
+        StorageReference pathRef = FirebaseStorage.getInstance().getReference().child(get_content_img_path);
         pathRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
@@ -129,6 +130,21 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
                     Glide.with(context).load(uri).into(holder.img3);
                     holder.img3.setVisibility(View.VISIBLE);
                 }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) { }
+        });
+    }
+
+    private void getProfileURIFromStorage(@NonNull ViewHolder holder, ContentRecyclerViewItem item) {
+        String get_profile_img_path = "Profile_images/" + item.getUser_id() + "/"
+                + "profile.jpg";
+        StorageReference pathRef = FirebaseStorage.getInstance().getReference().child(get_profile_img_path);
+        pathRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                    Glide.with(context).load(uri).into(holder.user_img);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
