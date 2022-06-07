@@ -23,10 +23,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecyclerViewAdapter.ViewHolder> {
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private List<ContentRecyclerViewItem> mItemList = null;
     private List<Uri> image_list = null;
     private Context context;
@@ -71,6 +73,7 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
         holder.user_img.setImageURI(item.getUser_img());
         holder.user_name.setText(item.getUser_name());
         holder.user_text.setText(item.getContent_text());
+        holder.content_time.setText(longTimeToDatetimeAsString(item.getTime()));
 
         holder.img_layout1.setVisibility(View.VISIBLE);
         holder.img_layout2.setVisibility(View.VISIBLE);
@@ -109,6 +112,13 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
         holder.like_button.setText(holder.itemView.getResources().getString(R.string.content_likes, item.getLikes()));
         holder.like_button.setOnClickListener(view -> changeLikes(holder, view, position, Current_User));
         holder.like_button2.setOnClickListener(view -> changeLikes(holder, view, position, Current_User));
+    }
+
+    private String longTimeToDatetimeAsString(long resultTime)
+    {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        String formatTime = dateFormat.format(resultTime);
+        return formatTime;
     }
 
     private void getContentURIFromStorage(@NonNull ViewHolder holder, ContentRecyclerViewItem item, int i) {
@@ -224,6 +234,7 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
         ImageView user_img;
         TextView user_name;
         TextView user_text;
+        TextView content_time;
         LinearLayout img_layout1;
         LinearLayout img_layout2;
         ImageView img1;
@@ -240,6 +251,7 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
             user_img = itemView.findViewById(R.id.user_img);
             user_name = itemView.findViewById(R.id.user_name);
             user_text = itemView.findViewById(R.id.user_text);
+            content_time = itemView.findViewById(R.id.content_time);
             img_layout1 = itemView.findViewById(R.id.img_layout1);
             img_layout2 = itemView.findViewById(R.id.img_layout2);
             img1 = itemView.findViewById(R.id.img1);
