@@ -118,7 +118,7 @@ public class SearchActivity extends AppCompatActivity {
                     if (user.getName().toLowerCase(Locale.ROOT).contains(key.toLowerCase(Locale.ROOT))
                             || user.getProfileText().toLowerCase(Locale.ROOT).contains(key.toLowerCase(Locale.ROOT)))
                     {
-                        userSearchResultList.add(new UserSearchAdapter.UserSearchResult(null, user.getName(), user.getProfileText()));
+                        userSearchResultList.add(new UserSearchAdapter.UserSearchResult(null, user.getName(), user.getProfileText(),user.getUid()));
                     }
                 }
                 searchResultRecyclerView.setAdapter(userSearchAdapter);

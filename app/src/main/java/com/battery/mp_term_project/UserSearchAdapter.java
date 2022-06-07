@@ -1,6 +1,7 @@
 package com.battery.mp_term_project;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,12 +25,13 @@ public class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.Vi
         Uri profileImageUri;
         String userName;
         String profileText;
-
-        UserSearchResult(Uri profileImageUri, String userName, String profileText)
+        String uid;
+        UserSearchResult(Uri profileImageUri, String userName, String profileText, String uid)
         {
             this.profileImageUri = profileImageUri;
             this.userName = userName;
             this.profileText = profileText;
+            this.uid = uid;
         }
     }
 
@@ -48,9 +50,16 @@ public class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.Vi
         holder.profileUserName.setText(result.userName);
         holder.profileText.setText(result.profileText);
 
-        holder.itemView.setOnClickListener((view -> {
+        holder.itemView.setOnClickListener(view -> openProfile(view, position, result.uid));
             //#todo : 프로필 이동 추가
-        }));
+    }
+
+     void openProfile(View view, int position, String uid){
+        Context context = view.getContext();
+        Intent intent = new Intent(context, ProfileActivity.class);
+        intent.putExtra("uid", uid);
+        context.startActivity(intent);
+
     }
 
     @Override
