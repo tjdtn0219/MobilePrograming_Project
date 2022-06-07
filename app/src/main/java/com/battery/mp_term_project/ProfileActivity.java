@@ -80,14 +80,16 @@ public class ProfileActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         uid = intent.getStringExtra("uid");
+
         id_test = ((GlobalVar) getApplication()).getCurrent_user().getUid();
+        Log.d("profile", id_test);
 
         profile_pt = (ImageView) findViewById(R.id.profile_pt);
         profile_name = (TextView) findViewById(R.id.profile_name);
         profile_text = (TextView) findViewById(R.id.profile_text);
 
 
-        Log.d("profile", id_test);
+
 
 
         //프로필 요소 추가

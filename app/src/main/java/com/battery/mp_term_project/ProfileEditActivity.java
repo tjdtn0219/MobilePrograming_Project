@@ -96,10 +96,15 @@ public class ProfileEditActivity extends AppCompatActivity {
 
 
 
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                intent.putExtra("uid", ((GlobalVar) getApplication()).getCurrent_user().getUid());
                 startActivity(intent);
                 finish();
                 Toast.makeText(getApplicationContext(), "프로필 수정이 완료되었습니다.", Toast.LENGTH_LONG).show();
+                /*Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
+                finish();
+                Toast.makeText(getApplicationContext(), "프로필 수정이 완료되었습니다.", Toast.LENGTH_LONG).show();*/
 
             }
         });
