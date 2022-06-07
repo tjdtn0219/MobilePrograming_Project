@@ -96,7 +96,7 @@ public class ProfileEditActivity extends AppCompatActivity {
 
 
 
-                Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.putExtra("uid", ((GlobalVar) getApplication()).getCurrent_user().getUid());
                 startActivity(intent);
                 finish();
