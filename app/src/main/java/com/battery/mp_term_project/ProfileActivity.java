@@ -143,14 +143,28 @@ public class ProfileActivity extends AppCompatActivity {
 
 
         //프로필 이름, 글 수정하는 버튼
-        btn_Edit = (Button) findViewById(R.id.btn_Edit);
+        /*btn_Edit = (Button) findViewById(R.id.btn_Edit);
         btn_Edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), ProfileEditActivity.class);
                 startActivity(intent);
             }
-        });
+        });*/
+        btn_Edit = (Button) findViewById(R.id.btn_Edit);
+        if(id_test.equals(uid)){
+            btn_Edit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getApplicationContext(), ProfileEditActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }else{
+            btn_Edit.setVisibility(View.GONE);
+        }
+
+
 
         btn_chat = findViewById(R.id.btn_chat);
         if( id_test.equals(uid)){
@@ -161,6 +175,7 @@ public class ProfileActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(getApplicationContext(),ChattingActivity.class);
+                    intent.putExtra("uid", uid);
                     startActivity(intent);
                 }
             });
