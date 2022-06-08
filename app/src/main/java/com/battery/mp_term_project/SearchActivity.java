@@ -63,7 +63,7 @@ public class SearchActivity extends AppCompatActivity {
 
         searchResultRecyclerView = findViewById(R.id.searchResultRecyclerView);
         searchResultRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        contentSearchAdapter = new ContentRecyclerViewAdapter();
+        contentSearchAdapter = new ContentRecyclerViewAdapter(((GlobalVar) getApplication()).getCurrent_user());
         userSearchAdapter = new UserSearchAdapter();
 
         String keyword = getIntent().getStringExtra("Keyword");
