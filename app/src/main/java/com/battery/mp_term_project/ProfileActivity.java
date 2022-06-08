@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -65,6 +66,7 @@ public class ProfileActivity extends AppCompatActivity {
     String user_txt;
 
     String id_test;
+    Handler mHandler = new Handler();
 
 
     //프로필 사진 요청코드
@@ -194,6 +196,9 @@ public class ProfileActivity extends AppCompatActivity {
         myRef = FirebaseDatabase.getInstance().getReference();
         Query myTopPostsQuery = myRef.child("Contents");
 
+
+        mHandler.postDelayed(new Runnable() {
+            public void run() {
         ValueEventListener postListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -223,6 +228,8 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             };
         myTopPostsQuery.addValueEventListener(postListener);
+            }
+        }, 300); // 0.3초후
     }
 
     private void getURIFromStorage(String uid) {

@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private List<ContentRecyclerViewItem> itemList;
     private ContentRecyclerViewAdapter contentRecyclerViewAdapter;
     private RecyclerView.LayoutManager layoutManager;
+    Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,41 +144,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void mainbindList(){
-
         layoutManager = new LinearLayoutManager(this);
         myRef = FirebaseDatabase.getInstance().getReference();
         Query myTopPostsQuery = myRef.child("Contents");
         RecyclerView mainRecyclerView = findViewById(R.id.main_recycler_view);
-        //citiesRef.orderBy("name").limit(3);
 
-            ValueEventListener postListener_content = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    itemList = new ArrayList<>();
+        mHandler.postDelayed(new Runnable() {
+            public void run() {
+                ValueEventListener postListener_content = new ValueEventListener() {
 
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        Content content = snapshot.getValue(Content.class);
-                        if(content != null) {
-                            content.setKey(snapshot.getKey());
-                            itemList.add(new ContentRecyclerViewItem(content));
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        itemList = new ArrayList<>();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Content content = snapshot.getValue(Content.class);
+                            if(content != null) {
+                                content.setKey(snapshot.getKey());
+                                itemList.add(new ContentRecyclerViewItem(content));
+                            }
                         }
+
+                        contentRecyclerViewAdapter = new ContentRecyclerViewAdapter(itemList, ((GlobalVar) getApplication()).getCurrent_user());
+                        mainRecyclerView.setAdapter(contentRecyclerViewAdapter);
+                        mainRecyclerView.setLayoutManager(layoutManager);
+
                     }
 
-                    contentRecyclerViewAdapter = new ContentRecyclerViewAdapter(itemList, ((GlobalVar) getApplication()).getCurrent_user());
-//                contentRecyclerViewAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
-                    mainRecyclerView.setAdapter(contentRecyclerViewAdapter);
-                    Log.e("TAGG", "mainbind-data");
-                    mainRecyclerView.setLayoutManager(layoutManager);
-                }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Getting Post failed, log a message
+                    }
+                };
+                myTopPostsQuery.addListenerForSingleValueEvent(postListener_content);
+            }
+        }, 300); // 0.3초후
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    // Getting Post failed, log a message
 
-                }
-            };
-//        myTopPostsQuery.addValueEventListener(postListener_content);
-            myTopPostsQuery.addListenerForSingleValueEvent(postListener_content);
 
     }
 
