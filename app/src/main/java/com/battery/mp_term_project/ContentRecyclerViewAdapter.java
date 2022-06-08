@@ -38,6 +38,11 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
         mItemList = new ArrayList<>();
     }
 
+    public ContentRecyclerViewAdapter(User user) {
+        mItemList = new ArrayList<>();
+        Current_User = user;
+    }
+
     public ContentRecyclerViewAdapter(List<ContentRecyclerViewItem> mItemList, User user) {
         setItemList(mItemList);
         Current_User = user;
@@ -211,16 +216,19 @@ public class ContentRecyclerViewAdapter extends RecyclerView.Adapter<ContentRecy
     }
 
     void AdaptLikesButtonState(@NonNull ViewHolder holder, ContentRecyclerViewItem item) {
-        if(Current_User.getLikes_list().size() > 0) {
-            Log.e("TAGG", "좋아요 어댑터");
-            List<String> likes_list = Current_User.getLikes_list();
-            Boolean flag = likes_list.contains(item.getKey());
-            if(flag) {
-                holder.like_button.setVisibility(View.INVISIBLE);
-                holder.like_button2.setVisibility(View.VISIBLE);
-                holder.like_button2.setText(holder.itemView.getResources().getString(R.string.content_likes, item.getLikes()));
+        if(Current_User.getLikes_list() != null) {
+            if(Current_User.getLikes_list().size() > 0) {
+                Log.e("TAGG", "좋아요 어댑터");
+                List<String> likes_list = Current_User.getLikes_list();
+                Boolean flag = likes_list.contains(item.getKey());
+                if(flag) {
+                    holder.like_button.setVisibility(View.INVISIBLE);
+                    holder.like_button2.setVisibility(View.VISIBLE);
+                    holder.like_button2.setText(holder.itemView.getResources().getString(R.string.content_likes, item.getLikes()));
+                }
             }
         }
+
     }
 
     // getItemCount : 전체 데이터의 개수를 리턴
