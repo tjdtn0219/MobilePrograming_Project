@@ -42,6 +42,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -146,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
     private void mainbindList(){
         layoutManager = new LinearLayoutManager(this);
         myRef = FirebaseDatabase.getInstance().getReference();
-        Query myTopPostsQuery = myRef.child("Contents");
+        Query myTopPostsQuery = myRef.child("Contents").orderByChild("time");
         RecyclerView mainRecyclerView = findViewById(R.id.main_recycler_view);
 
         mHandler.postDelayed(new Runnable() {
@@ -164,6 +165,8 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
 
+                        // 최신순 정렬을 위하여 reverse
+                        Collections.reverse(itemList);
                         contentRecyclerViewAdapter = new ContentRecyclerViewAdapter(itemList, ((GlobalVar) getApplication()).getCurrent_user());
                         mainRecyclerView.setAdapter(contentRecyclerViewAdapter);
                         mainRecyclerView.setLayoutManager(layoutManager);
